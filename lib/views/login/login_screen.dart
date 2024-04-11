@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
-
 import '../../util/app_constants.dart';
 import '../book_slots/slot_arrangement_screen.dart';
 import 'forgot_password_screen.dart';
@@ -18,32 +17,48 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  Future<void> loginUser() async {
-    const String apiUrl = '${AppConstants.baseUrl}${AppConstants.login}';
+   bool _isPasswordVisible = false;
 
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        "email": _emailController.text,
-        "password": _passwordController.text,
-      }),
-    );
-    if (response.statusCode == 200) {
-      // Successfully posted data
-      developer.log('User logged successfully');
-      saveUserEmail();
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const SlotArrangementScreen()),
+    
+  Future<void> loginUser() async {
+    try {
+      const String apiUrl = '${AppConstants.baseUrl}${AppConstants.login}';
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          "email": _emailController.text,
+          "password": _passwordController.text,
+        }),
       );
-    } else {
-      // Failed to post data
-      developer.log('Failed to login user. Error: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+        developer.log('User logged successfully');
+        saveUserEmail();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SlotArrangementScreen()),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login Successful!')),
+        );
+      } else {
+        developer.log('Failed to login user. Error: ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login Failed: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      developer.log('Failed to login user. Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Network Error: Please try again later.')),
+      );
     }
   }
+
   saveUserEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userEmail = _emailController.text;
@@ -53,10 +68,13 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+     
+      body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            //add image
+           
             Container(
               alignment: Alignment.topRight,
               child: Image.asset(
@@ -73,24 +91,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 40,
-            ),
-            //Email
+           
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
-                '       Email Address',
+                'Email Address',
                 style: TextStyle(
                   fontSize: 12,
                 ),
               ),
             ),
-            const SizedBox(
-              height: 18,
-            ),
+          
             Container(
-              width: 350,
+              width: double.infinity,
               height: 50,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 226, 223, 223),
@@ -100,29 +113,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
+                    borderRadius: BorderRadius.circular(30),
                     borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
+                    borderRadius: BorderRadius.circular(30),
                     borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   prefixIcon: const Icon(
                     Icons.phone_android_rounded,
                     color: Colors.grey,
                   ),
-                  hintText: 'nimal@domain.abc',
+                  hintText: 'user@gmail.com',
                   hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
-                  //  errorText: _validate ? 'Value cant be empty' : null,
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            //password
+
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
-                '       Password',
+                'Password',
                 style: TextStyle(
                   fontSize: 12,
                 ),
@@ -131,8 +142,9 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(
               height: 18,
             ),
+
             Container(
-              width: 350,
+              width: double.infinity,
               height: 50,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 226, 223, 223),
@@ -140,22 +152,33 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               child: TextField(
                 controller: _passwordController,
+                obscureText: !_isPasswordVisible,
                 decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
+                    borderRadius: BorderRadius.circular(30),
                     borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
+                    borderRadius: BorderRadius.circular(30),
                     borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   prefixIcon: const Icon(
                     Icons.lock,
                     color: Colors.grey,
                   ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
                   hintText: '********',
                   hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
-                  //  errorText: _validate ? 'Value cant be empty' : null,
                 ),
               ),
             ),
@@ -178,7 +201,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 150),
+
+
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -197,12 +221,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+
+
             SizedBox(
-              height: 60,
-              width: 300,
+              height: 40,
+              width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
                   loginUser();
@@ -217,6 +240,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
+            const SizedBox(
+              height: 24,
+            )
           ],
         ),
       ),
