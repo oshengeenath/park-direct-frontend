@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:park_direct_frontend/views/login/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
-
 import '../../util/app_constants.dart';
 import 'verification_code_screen.dart';
 class RegisterScreen extends StatefulWidget {
@@ -27,7 +26,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "email": _emailController.text,
       }),
     );
-
     if (response.statusCode == 201) {
       developer.log('Email sent successfully');
       saveUserEmail();
@@ -66,8 +64,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 style: GoogleFonts.lato(fontSize: 25, color: const Color.fromARGB(255, 0, 0, 0), fontWeight: FontWeight.bold),
               ),
             ),
-         
-           
             Column(
               children: [
                 const Align(
@@ -80,7 +76,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
-             
                 const SizedBox(
                   height: 8,
                 ),
@@ -91,7 +86,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     color: const Color.fromARGB(255, 226, 223, 223),
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  
                   child: TextField(
                     controller: _emailController,
                     decoration: InputDecoration(
@@ -111,7 +105,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                     ),
                   ),
-                 
                 ),
               ],
             ),
@@ -130,14 +123,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
-                
                 ),
               ),
             ),
-
             SizedBox(
               height: 40,
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
                   registerUser();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFC700),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                ),
+                child: Text(
+                  'Register',
+                  style: GoogleFonts.poppins(color: const Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),

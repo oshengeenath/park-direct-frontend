@@ -83,94 +83,115 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            const Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                'Email Address',
-                style: TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 50,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 223, 223),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+          
+            Column(
+              children: [
+                const Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Email Address',
+                    style: TextStyle(
+                      fontSize: 12,
+                    ),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                 
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 226, 223, 223),
                     borderRadius: BorderRadius.circular(30),
                     borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   prefixIcon: const Icon(
                     Icons.phone_android_rounded,
                     color: Colors.grey,
-                  ),
-                  hintText: 'user@gmail.com',
-                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
-                ),
-              ),
-            ),
-            const Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                'Password',
-                style: TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 18,
-            ),
-            Container(
-              width: double.infinity,
-              height: 50,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 223, 223),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TextField(
-                controller: _passwordController,
-                obscureText: !_isPasswordVisible,
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
-                  ),
-                  prefixIcon: const Icon(
-                    Icons.lock,
-                    color: Colors.grey,
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                      color: Colors.grey,
+                  child: TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                       ),
+                      
+                      ),
+                      hintText: 'user@gmail.com',
+                      hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
                   ),
-                  hintText: '********',
-                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
-                ),
-              ),
+                  
+              ],
             ),
-            const SizedBox(height: 10),
+            
+            Column(
+              children: [
+                const Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Password',
+                    style: TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+                
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 226, 223, 223),
+                    borderRadius: BorderRadius.circular(30),
+                   
+                  ),
+                 
+                  child: TextField(
+                    controller: _passwordController,
+                    obscureText: !_isPasswordVisible,
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.lock,
+                        color: Colors.grey,
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      ),
+                      hintText: '********',
+                      hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                    ),
+                   
+                  ),
+                 
+                ),
+              
+              ],
+            ),
+            
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -220,7 +241,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: const Text(
                   'Login',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255)),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 255, 255, 255),
+                  ),
                 ),
               ),
             ),
