@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:park_direct_frontend/views/login/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 
 import '../../util/app_constants.dart';
 import 'verification_code_screen.dart';
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
   @override
@@ -16,10 +16,8 @@ class RegisterScreen extends StatefulWidget {
 }
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
-
   Future<void> registerUser() async {
     const String apiUrl = '${AppConstants.baseUrl}${AppConstants.sendMail}';
-
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{
@@ -29,8 +27,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "email": _emailController.text,
       }),
     );
+
     if (response.statusCode == 201) {
-      // Successfully posted data
       developer.log('Email sent successfully');
       saveUserEmail();
       Navigator.push(
@@ -38,7 +36,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         MaterialPageRoute(builder: (context) => const VerificationCodeScreen()),
       );
     } else {
-      // Failed to post data
       developer.log('Failed to sent email. Error: ${response.statusCode}');
     }
   }
@@ -51,10 +48,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            //add image
             Container(
               alignment: Alignment.topRight,
               child: Image.asset(
@@ -64,98 +62,82 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Container(
               alignment: Alignment.topLeft,
               child: Text(
-                '    Register to \n    ParkDirect Account',
+                'Register to\nParkDirect Account',
                 style: GoogleFonts.lato(fontSize: 25, color: const Color.fromARGB(255, 0, 0, 0), fontWeight: FontWeight.bold),
               ),
             ),
-            const SizedBox(
-              height: 40,
+         
+           
+            Column(
+              children: [
+                const Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Email Address',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+             
+                const SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 226, 223, 223),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  
+                  child: TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.phone_android_rounded,
+                        color: Colors.grey,
+                      ),
+                      hintText: 'user@gmail.com',
+                      hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                    ),
+                  ),
+                 
+                ),
+              ],
             ),
-            const Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                '       Email Address',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              },
+              child: const Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'Already have an account Login',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                
                 ),
               ),
             ),
-            const SizedBox(
-              height: 18,
-            ),
-            Container(
-              width: 350,
-              height: 50,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 223, 223),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
-                  ),
-                  prefixIcon: const Icon(
-                    Icons.phone_android_rounded,
-                    color: Colors.grey,
-                  ),
-                  hintText: 'nimal@domain.abc',
-                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
-                  //  errorText: _validate ? 'Value cant be empty' : null,
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 270,
-            ),
-            // GestureDetector(
-            //   onTap: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => SignUp()),
-            //     );
-            //   },
-            //   child: Align(
-            //     alignment: Alignment.center,
-            //     child: Text(
-            //       'I don\'t have account',
-            //       style: TextStyle(
-            //         fontSize: 12,
-            //         fontWeight: FontWeight.bold,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            const SizedBox(
-              height: 20,
-            ),
+
             SizedBox(
-              height: 60,
-              width: 300,
+              height: 40,
+              width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
                   registerUser();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFC700),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-                ),
-                child: Text(
-                  'Register',
-                  style: GoogleFonts.poppins(fontSize: 20, color: const Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

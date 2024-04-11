@@ -16,14 +16,10 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-   bool _isPasswordVisible = false;
-
-    
+  bool _isPasswordVisible = false;
   Future<void> loginUser() async {
     try {
       const String apiUrl = '${AppConstants.baseUrl}${AppConstants.login}';
-
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: <String, String>{
@@ -34,8 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
           "password": _passwordController.text,
         }),
       );
-
-    if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
         developer.log('User logged successfully');
         saveUserEmail();
         Navigator.push(
@@ -58,7 +53,6 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
   }
-
   saveUserEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userEmail = _emailController.text;
@@ -68,13 +62,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-           
             Container(
               alignment: Alignment.topRight,
               child: Image.asset(
@@ -84,14 +76,13 @@ class _LoginScreenState extends State<LoginScreen> {
             Container(
               alignment: Alignment.topLeft,
               child: const Text(
-                '    Login to \n    your account',
+                'Login to\nyour account',
                 style: TextStyle(
                   fontSize: 35,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-           
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
@@ -101,7 +92,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-          
             Container(
               width: double.infinity,
               height: 50,
@@ -129,7 +119,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
@@ -142,7 +131,6 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(
               height: 18,
             ),
-
             Container(
               width: double.infinity,
               height: 50,
@@ -201,8 +189,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-
-
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -213,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: const Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'I don\'t have account',
+                  'Don\'t have an account Register',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -221,8 +207,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-
-
             SizedBox(
               height: 40,
               width: double.infinity,
