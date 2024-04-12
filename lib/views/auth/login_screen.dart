@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 import '../../util/app_constants.dart';
-import '../book_slots/slot_arrangement_screen.dart';
+import '../vehicle_owner_book_slot/slot_arrangement_screen.dart';
 import 'forgot_password_screen.dart';
 import 'register_screen.dart';
 class LoginScreen extends StatefulWidget {

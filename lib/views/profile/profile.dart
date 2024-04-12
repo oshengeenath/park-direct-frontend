@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../book_slots/slot_arrangement_screen.dart';
+import '../vehicle_owner_book_slot/slot_arrangement_screen.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -83,7 +83,6 @@ class _ProfileState extends State<Profile> {
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
-                '       Personal Details',
                 'Personal Details',
                 style: TextStyle(
                   fontSize: 13,
