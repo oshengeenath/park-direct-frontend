@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../home_screens/officer_home_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
@@ -35,12 +36,18 @@ class _LoginScreenState extends State<LoginScreen> {
         final responseData = json.decode(response.body);
 
         // Assuming the response data contains a 'user' object and a 'token' string
-        saveUserLocally(responseData['user'], responseData['token']);
+        await saveUserLocally(responseData['user'], responseData['token']);
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SlotArrangementScreen()),
-        );
+        // Check user type and navigate accordingly
+        if (responseData['user']['userRole'] == 'vehicleOwner') {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SlotArrangementScreen()));
+        } else if (responseData['user']['userRole'] == 'officer') {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const OfficerHomeScreen()));
+        } else {
+          developer.log('Unknown user type');
+        }
+
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login Successful!')),
         );
