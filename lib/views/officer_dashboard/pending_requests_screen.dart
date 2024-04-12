@@ -1,30 +1,24 @@
+// ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:park_direct_frontend/util/app_constants.dart';
-
 import '../../models/booking_model.dart';
 import 'booking_confirmation_Screen.dart';
-
 class PendingRequestsScreen extends StatefulWidget {
   const PendingRequestsScreen({super.key});
-
   @override
   _PendingRequestsScreenState createState() => _PendingRequestsScreenState();
 }
-
 class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
   late Future<List<Booking>> pendingRequests;
-
   @override
   void initState() {
     super.initState();
     pendingRequests = fetchPendingRequests();
   }
-
   Future<List<Booking>> fetchPendingRequests() async {
     final response = await http.get(Uri.parse(AppConstants.baseUrl + AppConstants.officerFetchAllPendingBookings));
-
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Booking.fromJson(data)).toList();
@@ -32,7 +26,6 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
       throw Exception('Failed to load pending requests');
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,12 +64,32 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
                       );
                     },
                     child: Container(
-                      color: const Color(0xFFE3E2E2),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: const BoxDecoration(
+                        color: Color.fromARGB(255, 244, 240, 240),
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Color(0xFFE3E2E2), // Color for the bottom line
+                            width: 1.0, // Thickness of the bottom line
+                          ),
+                        ),
+                      ),
                       child: ListTile(
-                        title: Text(booking.email),
-                        subtitle: Text('Arrival: ${booking.arrivalTime}, Leave: ${booking.leaveTime}, Vehicle: ${booking.vehicleNumber}'),
-                        trailing: Text('Slot: ${booking.parkingSlotId}'),
-                        // Add more details or customize as needed
+                        title: Text("The vehicle '${booking.vehicleNumber}' is requesting a location."),
+                        trailing: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color(0xFFFFC700),
+                          ),
+                          child: const Text(
+                            'View',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   );
