@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:park_direct_frontend/views/officer_confirm_slot/my_profile_screen.dart';
-import 'package:park_direct_frontend/views/officer_confirm_slot/parking_slots_screen.dart';
-import 'package:park_direct_frontend/views/officer_confirm_slot/pending_requests_screen.dart';
-import 'package:park_direct_frontend/views/officer_confirm_slot/today_arrivals_screen.dart';
-
+import 'package:park_direct_frontend/views/officer_dashboard/my_profile_screen.dart';
+import 'package:park_direct_frontend/views/officer_dashboard/parking_slots_screen.dart';
+import 'package:park_direct_frontend/views/officer_dashboard/pending_requests_screen.dart';
+import 'package:park_direct_frontend/views/officer_dashboard/today_arrivals_screen.dart';
 class OfficerHomeScreen extends StatelessWidget {
   const OfficerHomeScreen({super.key});
 
