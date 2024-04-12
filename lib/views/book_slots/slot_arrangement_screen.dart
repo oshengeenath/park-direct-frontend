@@ -1,4 +1,5 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously, use_super_parameters
+// ignore_for_file: use_super_parameters
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,12 +7,11 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
-
 import '../../util/app_constants.dart';
 import '../login/login_screen.dart';
 import 'history_screen.dart';
-import 'map_screen.dart';
 import '../profile/profile.dart';
+
 class SlotArrangementScreen extends StatefulWidget {
   const SlotArrangementScreen({super.key});
   @override
@@ -20,6 +20,7 @@ class SlotArrangementScreen extends StatefulWidget {
 class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _vehicleNumberController = TextEditingController();
+  String _displayTime = '00:00';
   DateTime pickedDate = DateTime.now();
   int dateFieldData = 0;
   int selectedValue = 0;
@@ -77,6 +78,8 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
       });
     });
   }
+
+  // TODO: Instead of this method, save these details in the backend
   saveSlotData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String slotDate = _dateController.text;
@@ -94,103 +97,95 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
     return WillPopScope(
         child: Scaffold(
           appBar: AppBar(
+            centerTitle: true,
             backgroundColor: const Color(0xFFFFC700),
             title: const Text(
-              '    Slot Arrangement',
+              'Slot Arrangement',
               style: TextStyle(
-                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          drawer: const NavigationDrawer(), // Use the NavigationDrawer widget as the drawer
-          body: SingleChildScrollView(
+          drawer: const NavigationDrawer(),
+          body: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                const SizedBox(
-                  height: 50,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
                 GestureDetector(
                   onTap: () => _datePicker(),
                   child: Container(
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 226, 223, 223),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      height: 50,
-                      width: 360,
-                      child: Row(
-                        children: <Widget>[
-                          const SizedBox(width: 10),
-                          const Icon(
-                            Icons.calendar_month_outlined,
-                            color: Color(0xFFFFC700),
-                          ),
-                          const SizedBox(width: 10),
-                          const Text('Pick a Date'),
-                          const SizedBox(
-                            width: 100,
-                          ),
-                          Text(
-                            _dateController.text,
-                            //' ${timeValues[selectedValue]}',
-                            style: const TextStyle(fontSize: 15),
-                          ),
-                        ],
-                      )),
+                    padding: const EdgeInsets.all(16),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 226, 223, 223),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        const Icon(
+                          Icons.calendar_month_outlined,
+                          color: Color(0xFFFFC700),
+                        ),
+                        const Text('Pick a Date'),
+                        Text(
+                          _dateController.text,
+                          style: const TextStyle(fontSize: 15),
+                        ),
+                        const SizedBox(
+                          width: 16,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //cupertino time selecter
                 GestureDetector(
-                  onTap: () => togglePickerVisibility(),
+                  onTap: () async {
+                    final TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if (pickedTime != null) {
+                      setState(() {
+                        final String formattedTime = pickedTime.format(context);
+                        _displayTime = formattedTime;
+
+                        int closestIndex = timeValues.indexOf(formattedTime);
+                        if (closestIndex != -1) {
+                          selectedValue = closestIndex;
+                        }
+                      });
+                    }
+                  },
                   child: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 226, 223, 223),
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      height: 50,
-                      width: 360,
+                      padding: const EdgeInsets.all(16),
+                      width: double.infinity,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
-                          const SizedBox(width: 10),
                           const Icon(
                             Icons.timer,
                             color: Color(0xFFFFC700),
                           ),
-                          const SizedBox(width: 10),
                           const Text('Pick a Time'),
-                          const SizedBox(
-                            width: 120,
-                          ),
                           Text(
-                            ' ${timeValues[selectedValue]}',
+                            ' $_displayTime',
                             style: const TextStyle(fontSize: 15),
                           ),
                         ],
                       )),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  'You Can Stay 30 Minutes only',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
                 if (isPickerVisible)
                   Container(
                     height: 100,
-                    width: 150,
+                    width: double.infinity,
                     decoration: BoxDecoration(color: const Color.fromARGB(142, 255, 255, 255), borderRadius: BorderRadius.circular(10), boxShadow: const [
                       BoxShadow(
                         color: Colors.black26,
@@ -198,8 +193,6 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                         offset: Offset(0, 2),
                       )
                     ]),
-                    //child: CupertinoActionSheet(
-                    // actions: [
                     child: CupertinoPicker(
                       itemExtent: 32,
                       onSelectedItemChanged: (int index) {
@@ -215,13 +208,12 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                       }).toList(),
                     ),
                   ),
-                const SizedBox(height: 10),
                 if (isPickerVisible)
                   GestureDetector(
                     onTap: () => togglePickerVisibility(),
                     child: Container(
-                      height: 30,
-                      width: 120,
+                      padding: const EdgeInsets.all(8),
+                      width: double.infinity,
                       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), boxShadow: const [
                         BoxShadow(
                           color: Colors.black26,
@@ -231,45 +223,30 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                       ]),
                       child: const Row(
                         children: <Widget>[
-                          SizedBox(width: 10),
                           Icon(Icons.check_circle),
-                          SizedBox(width: 10),
                           Text('Select'),
                         ],
                       ),
                     ),
                   ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //vehicle Number
                 Container(
-                  width: 350,
-                  height: 130,
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: const Color.fromARGB(255, 226, 223, 223),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Column(
                     children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
                       const Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          '       Vehicle',
+                          'Vehicle',
                           style: TextStyle(
                             fontSize: 18,
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       Container(
-                        width: 300,
-                        height: 50,
                         decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 255, 255, 255),
                           borderRadius: BorderRadius.circular(30),
@@ -278,70 +255,37 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                           controller: _vehicleNumberController,
                           decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
+                              borderRadius: BorderRadius.circular(30),
                               borderSide: const BorderSide(color: Color.fromARGB(255, 170, 168, 168), width: 2.0),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
+                              borderRadius: BorderRadius.circular(30),
                               borderSide: const BorderSide(color: Color.fromARGB(255, 170, 168, 168), width: 2.0),
                             ),
                             hintText: 'C 9719 LJ',
-                            hintStyle: const TextStyle(color: Color.fromARGB(255, 40, 38, 38)),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 170,
+                SizedBox(
+                  height: 40,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      saveSlotData();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFC700),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                    ),
+                    child: const Text(
+                      'Confirm',
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255)),
+                    ),
+                  ),
                 ),
-                Row(
-                  children: [
-                    const SizedBox(
-                      width: 30,
-                    ),
-                    //image
-                    Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 226, 223, 223),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        alignment: Alignment.topLeft,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Image.asset(
-                            'assets/slot.png',
-                          ),
-                        )),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    SizedBox(
-                      height: 50,
-                      width: 280,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          saveSlotData();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const MapScreen()),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFFC700),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-                        ),
-                        child: const Text(
-                          'Confirm',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255)),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
               ],
             ),
           ),
@@ -351,7 +295,7 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
             context,
             MaterialPageRoute(builder: (context) => const SlotArrangementScreen()),
           );
-          return false; // Return false to prevent the default back action
+          return false;
         });
   }
 }
@@ -361,13 +305,13 @@ class NavigationDrawer extends StatefulWidget {
   State<NavigationDrawer> createState() => _NavigationDrawerState();
 }
 class _NavigationDrawerState extends State<NavigationDrawer> {
-  String userEmail = ''; // Move userEmail to the state class
+  String userEmail = '';
   Map<String, dynamic> profileData = {};
   @override
   void initState() {
     super.initState();
     fetchProfileData();
-    getUserData(); // Call getUserData when the state is initialized
+    getUserData();
   }
   getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -422,13 +366,12 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                   radius: 52,
                   backgroundImage: AssetImage('assets/profile.png'),
                 ),
-                const SizedBox(height: 12),
                 Text(
                   profileData["fullname"] ?? '',
                   style: const TextStyle(fontSize: 28, color: Colors.white),
                 ),
                 Text(
-                  userEmail, // Display userEmail
+                  userEmail,
                   style: const TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ],
@@ -497,136 +440,3 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
         ]),
       );
 }
-// class NavigationDrawer extends StatelessWidget{
-//   NavigationDrawer({Key? key}) : super(key: key);
-//   String userEmail = '';
-//   Map<String, dynamic> profileData = {};
-//   getUserData() async {
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     setState(() {
-//       userEmail = prefs.getString('userEmail') ?? '';
-//     });
-//   }
-//   Future<void> fetchProfileData() async {
-//     await getUserData();
-//     try {
-//       final response = await http.get(Uri.parse('${AppConstants.baseUrl}/getuserdetails/$userEmail'));
-//       if (response.statusCode == 200) {
-//         setState(() {
-//           profileData = json.decode(response.body);
-//         });
-//         developer.log('user data: ${profileData}');
-//       } else {
-//         throw Exception('Failed to get profile details');
-//       }
-//     } catch (error) {
-//       developer.log('Error fetching profile details: $error');
-//     }
-//   }
-//   @override
-//   Widget build(BuildContext context) => Drawer(
-//         child: SingleChildScrollView(
-//             child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.stretch,
-//           children: <Widget>[
-//             buildHeader(context),
-//             buildMenuItems(context),
-//           ],
-//         )),
-//       );
-//   Widget buildHeader(BuildContext context) => Material(
-//       color: Colors.blue.shade700,
-//       child: InkWell(
-//           onTap: () {
-//             Navigator.pop(context);
-//           },
-//           child: Container(
-//               color: Color(0xFFFFC700),
-//               padding: EdgeInsets.only(
-//                 top: 24 + MediaQuery.of(context).padding.top,
-//                 bottom: 24,
-//               ),
-//               child: Column(
-//                 children: const [
-//                   CircleAvatar(
-//                     radius: 52,
-//                     backgroundImage: AssetImage('assets/profile.png'),
-//                   ),
-//                   SizedBox(
-//                     height: 12,
-//                   ),
-//                   Text(
-//                     'Sadeepa Ranasinghe',
-//                     style: TextStyle(fontSize: 28, color: Colors.white),
-//                   ),
-//                   Text(
-//                     'userEmail',
-//                     style: TextStyle(fontSize: 16, color: Colors.white),
-//                   )
-//                 ],
-//               ))));
-//   Widget buildMenuItems(BuildContext context) => Container(
-//         padding: const EdgeInsets.all(24),
-//         child: Wrap(runSpacing: 16, children: [
-//           ListTile(
-//             leading: const Icon(Icons.person),
-//             title: const Text('profile'),
-//             onTap: () {
-//               Navigator.pop(context);
-//               Navigator.of(context)
-//                   .push(MaterialPageRoute(builder: (context) => Profile()));
-//             },
-//           ),
-//           ListTile(
-//               leading: const Icon(Icons.history_rounded),
-//               title: const Text('History'),
-//               onTap: () {
-//                 Navigator.pop(context);
-//                 Navigator.of(context).push(MaterialPageRoute(
-//                     builder: (context) => const HistoryPage()));
-//               }),
-//           ListTile(
-//             leading: const Icon(Icons.payment),
-//             title: const Text('Payment'),
-//             onTap: () {
-//               Navigator.pop(context);
-//             },
-//           ),
-//           ListTile(
-//             leading: const Icon(Icons.support_agent),
-//             title: const Text('Support'),
-//             onTap: () {
-//               Navigator.pop(context);
-//             },
-//           ),
-//           ListTile(
-//             leading: const Icon(Icons.people),
-//             title: const Text('Community'),
-//             onTap: () {
-//               Navigator.pop(context);
-//             },
-//           ),
-//           ListTile(
-//               ),
-//           ListTile(
-//             leading: const Icon(
-//               Icons.logout,
-//               color: Colors.red,
-//             ),
-//             title: const Text(
-//               'Log Out',
-//               style: TextStyle(color: Colors.red),
-//             ),
-//             onTap: () async{
-//               SharedPreferences prefs = await SharedPreferences.getInstance();
-//               prefs.remove("userEmail");
-//               prefs.remove("slotDate");
-//               prefs.remove("slotTime");
-//               prefs.remove("vehicleNumber");
-//               Navigator.of(context).push(MaterialPageRoute(
-//                   builder: (context) => const loginpage()));
-//             },
-//           ),
-//         ]),
-//       );
-// }
