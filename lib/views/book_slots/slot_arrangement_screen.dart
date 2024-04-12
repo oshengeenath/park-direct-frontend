@@ -116,17 +116,19 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Handle the response from the backend
-        final data = jsonDecode(response.body);
-        // Show success message or handle data
-        developer.log("Slot booking successful: $data");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Slot booking successful!!")),
+        );
       } else {
-        // Handle the error
-        developer.log("Failed to book slot: ${response.body}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text("Failed to book slot. Please try again.")),
+        );
       }
     } catch (e) {
-      // Handle any errors that occur during the POST request
-      developer.log("Error booking slot: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error booking slot: $e")),
+      );
     }
   }
 
@@ -364,7 +366,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
   @override
   void initState() {
     super.initState();
-    fetchProfileData();
+    // TODO: Get user details thourgh login endpoint
+    // fetchProfileData();
     getUserData();
   }
 
@@ -376,23 +379,23 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     });
   }
 
-  Future<void> fetchProfileData() async {
-    await getUserData();
-    try {
-      final response = await http
-          .get(Uri.parse('${AppConstants.baseUrl}/getuserdetails/$userEmail'));
-      if (response.statusCode == 200) {
-        setState(() {
-          profileData = json.decode(response.body);
-        });
-        developer.log('user data: $profileData');
-      } else {
-        throw Exception('Failed to get profile details');
-      }
-    } catch (error) {
-      developer.log('Error fetching profile details: $error');
-    }
-  }
+  // Future<void> fetchProfileData() async {
+  //   await getUserData();
+  //   try {
+  //     final response = await http
+  //         .get(Uri.parse('${AppConstants.baseUrl}/getuserdetails/$userEmail'));
+  //     if (response.statusCode == 200) {
+  //       setState(() {
+  //         profileData = json.decode(response.body);
+  //       });
+  //       developer.log('user data: $profileData');
+  //     } else {
+  //       throw Exception('Failed to get profile details');
+  //     }
+  //   } catch (error) {
+  //     developer.log('Error fetching profile details: $error');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) => Drawer(

@@ -16,7 +16,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   Future<void> registerUser() async {
-    const String apiUrl = '${AppConstants.baseUrl}${AppConstants.sendMail}';
+    const String apiUrl = '${AppConstants.baseUrl}${AppConstants.sendVerificationEmail}';
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{

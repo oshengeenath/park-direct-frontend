@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 
 import 'views/login/login_screen.dart';
-// import 'views/book_slots/slot_arrangement_screen.dart';
 
 void main() {
   runApp(const MainApp());

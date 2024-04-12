@@ -31,7 +31,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
 
   Future<void> sendPasswordChangeData() async {
     await getUserData();
-    const String apiUrl = '${AppConstants.baseUrl}${AppConstants.forgotpassword}';
+    const String apiUrl = '${AppConstants.baseUrl}${AppConstants.forgotPassword}';
 
     final response = await http.post(
       Uri.parse(apiUrl),

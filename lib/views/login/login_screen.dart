@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
   Future<void> loginUser() async {
     try {
-      const String apiUrl = '${AppConstants.baseUrl}${AppConstants.login}';
+      const String apiUrl = '${AppConstants.baseUrl}${AppConstants.loginUser}';
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: <String, String>{

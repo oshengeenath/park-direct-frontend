@@ -1,10 +1,10 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+// import 'dart:convert';
+// import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 
-import '../../util/app_constants.dart';
+// import '../../util/app_constants.dart';
 import '../book_slots/slot_arrangement_screen.dart';
 
 class Profile extends StatefulWidget {
@@ -12,6 +12,7 @@ class Profile extends StatefulWidget {
   @override
   State<Profile> createState() => _ProfileState();
 }
+
 class _ProfileState extends State<Profile> {
   String userEmail = '';
   Map<String, dynamic> profileData = {};
@@ -19,8 +20,10 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     getUserData();
-    fetchProfileData();
+    // TODO: Get user details thourgh login endpoint
+    // fetchProfileData();
   }
+
   getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -28,22 +31,25 @@ class _ProfileState extends State<Profile> {
       developer.log("email: $userEmail");
     });
   }
-  Future<void> fetchProfileData() async {
-    await getUserData();
-    try {
-      final response = await http.get(Uri.parse('${AppConstants.baseUrl}/getuserdetails/$userEmail'));
-      if (response.statusCode == 200) {
-        setState(() {
-          profileData = json.decode(response.body);
-        });
-        developer.log('user data: $profileData');
-      } else {
-        throw Exception('Failed to get profile details');
-      }
-    } catch (error) {
-      developer.log('Error fetching profile details: $error');
-    }
-  }
+
+  // Future<void> fetchProfileData() async {
+  //   await getUserData();
+  //   try {
+  //     final response = await http
+  //         .get(Uri.parse('${AppConstants.baseUrl}/getuserdetails/$userEmail'));
+  //     if (response.statusCode == 200) {
+  //       setState(() {
+  //         profileData = json.decode(response.body);
+  //       });
+  //       developer.log('user data: $profileData');
+  //     } else {
+  //       throw Exception('Failed to get profile details');
+  //     }
+  //   } catch (error) {
+  //     developer.log('Error fetching profile details: $error');
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +60,8 @@ class _ProfileState extends State<Profile> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const SlotArrangementScreen()),
+              MaterialPageRoute(
+                  builder: (context) => const SlotArrangementScreen()),
             );
           },
         ),
@@ -120,7 +127,8 @@ class _ProfileState extends State<Profile> {
                     color: Colors.grey,
                   ),
                   hintText: profileData["fullname"],
-                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintStyle:
+                      const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                 ),
               ),
             ),
@@ -142,7 +150,8 @@ class _ProfileState extends State<Profile> {
                     color: Colors.grey,
                   ),
                   hintText: profileData["email"],
-                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintStyle:
+                      const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                 ),
               ),
             ),
@@ -164,7 +173,8 @@ class _ProfileState extends State<Profile> {
                     color: Colors.grey,
                   ),
                   hintText: profileData["mobilenum"],
-                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintStyle:
+                      const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                 ),
               ),
             ),
@@ -179,16 +189,21 @@ class _ProfileState extends State<Profile> {
                 onPressed: () async {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SlotArrangementScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => const SlotArrangementScreen()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFFC700),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
                 ),
                 child: const Text(
                   'Back',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
               ),
             ),

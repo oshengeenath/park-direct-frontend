@@ -15,14 +15,17 @@ class VerificationCodeScreen extends StatefulWidget {
   @override
   _VerificationCodeScreenState createState() => _VerificationCodeScreenState();
 }
+
 class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   String registerEmail = '';
-  final TextEditingController _verificationCodeController = TextEditingController();
+  final TextEditingController _verificationCodeController =
+      TextEditingController();
   @override
   void initState() {
     super.initState();
     getUserData();
   }
+
   getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -33,7 +36,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 
   Future<void> sendVerirficationCode() async {
     await getUserData();
-    const String apiUrl = '${AppConstants.baseUrl}${AppConstants.verify}';
+    const String apiUrl = '${AppConstants.baseUrl}${AppConstants.verifyEmail}';
 
     final response = await http.post(
       Uri.parse(apiUrl),
@@ -54,9 +57,11 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
       );
     } else {
       // Failed to post data
-      developer.log('Failed to save verification code. Error: ${response.body}');
+      developer
+          .log('Failed to save verification code. Error: ${response.body}');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +74,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const LoginScreen()),
                     );
                   },
                   icon: const Icon(
@@ -92,7 +98,10 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
               alignment: Alignment.topLeft,
               child: Text(
                 '    Enter Verification \n    Code',
-                style: GoogleFonts.lato(fontSize: 25, color: const Color.fromARGB(255, 0, 0, 0), fontWeight: FontWeight.bold),
+                style: GoogleFonts.lato(
+                    fontSize: 25,
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                    fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(
@@ -134,19 +143,24 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 controller: _verificationCodeController,
                 decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                    borderRadius: BorderRadius.circular(
+                        30), // Adjust the radius to make it circular
+                    borderSide: const BorderSide(
+                        color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                    borderRadius: BorderRadius.circular(
+                        30), // Adjust the radius to make it circular
+                    borderSide: const BorderSide(
+                        color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   prefixIcon: const Icon(
                     Icons.verified,
                     color: Colors.grey,
                   ),
                   hintText: 'A3DVFE',
-                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintStyle:
+                      const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                 ),
               ),
             ),
@@ -175,11 +189,15 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFFC700),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
                 ),
                 child: Text(
                   'Verify',
-                  style: GoogleFonts.poppins(fontSize: 20, color: const Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold),
+                  style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ),

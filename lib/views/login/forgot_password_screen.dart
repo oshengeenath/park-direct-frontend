@@ -13,11 +13,13 @@ class ForgotPasswordScreen extends StatefulWidget {
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordState();
 }
+
 class _ForgotPasswordState extends State<ForgotPasswordScreen> {
   final TextEditingController _forgotPasswordEmail = TextEditingController();
 
   Future<void> sendForgotPasswordToken() async {
-    const String apiUrl = '${AppConstants.baseUrl}${AppConstants.forgotpassword}';
+    const String apiUrl =
+        '${AppConstants.baseUrl}${AppConstants.forgotPassword}';
 
     final response = await http.post(
       Uri.parse(apiUrl),
@@ -41,11 +43,13 @@ class _ForgotPasswordState extends State<ForgotPasswordScreen> {
       developer.log('Failed to send token. Error: ${response.statusCode}');
     }
   }
+
   saveUserEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String forgotPasswordEmail = _forgotPasswordEmail.text;
     await prefs.setString("forgotPasswordEmail", forgotPasswordEmail);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +78,8 @@ class _ForgotPasswordState extends State<ForgotPasswordScreen> {
               alignment: Alignment.topLeft,
               child: Text(
                 '      Please enter your email number to change\n       your password',
-                style: TextStyle(fontSize: 15, color: Color.fromARGB(255, 183, 170, 170)),
+                style: TextStyle(
+                    fontSize: 15, color: Color.fromARGB(255, 183, 170, 170)),
               ),
             ),
             const SizedBox(
@@ -104,19 +109,24 @@ class _ForgotPasswordState extends State<ForgotPasswordScreen> {
                 controller: _forgotPasswordEmail,
                 decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                    borderRadius: BorderRadius.circular(
+                        30), // Adjust the radius to make it circular
+                    borderSide: const BorderSide(
+                        color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                    borderRadius: BorderRadius.circular(
+                        30), // Adjust the radius to make it circular
+                    borderSide: const BorderSide(
+                        color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   prefixIcon: const Icon(
                     Icons.phone_android_rounded,
                     color: Colors.grey,
                   ),
                   hintText: 'nimal@domain.abc',
-                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintStyle:
+                      const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                   //  errorText: _validate ? 'Value cant be empty' : null,
                 ),
               ),
@@ -135,11 +145,15 @@ class _ForgotPasswordState extends State<ForgotPasswordScreen> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFFC700),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
                 ),
                 child: const Text(
                   'Continue',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255)),
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 255, 255, 255)),
                 ),
               ),
             ),
