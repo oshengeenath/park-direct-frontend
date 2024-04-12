@@ -1,52 +1,49 @@
 // ignore_for_file: use_super_parameters, use_build_context_synchronously, deprecated_member_use
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 import 'dart:developer' as developer;
+
 import '../../util/app_constants.dart';
 import '../auth/login_screen.dart';
 import 'history_screen.dart';
 import '../profile/profile.dart';
-
 class SlotArrangementScreen extends StatefulWidget {
   const SlotArrangementScreen({super.key});
   @override
   State<SlotArrangementScreen> createState() => _SlotArrangementScreenState();
 }
-
 class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
   final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _vehicleNumberController =
-      TextEditingController();
-  String _displayTime = '00:00';
+  final TextEditingController _vehicleNumberController = TextEditingController();
+
+  String _arrivalTime = '00:00';
+  String _leaveTime = '00:00';
+
   DateTime pickedDate = DateTime.now();
   int dateFieldData = 0;
   int selectedValue = 0;
   bool isPickerVisible = false;
-  String newValue = ' House Full';
-  String userEmail = '';
+
   void togglePickerVisibility() {
     setState(() {
       isPickerVisible = !isPickerVisible;
     });
   }
-
   void updateSelectedValue(int newValue) {
     setState(() {
       selectedValue = newValue;
     });
   }
-
   @override
   void initState() {
     super.initState();
     const NavigationDrawer();
   }
-
   List<String> timeValues = [
     '00:00',
     '01:00',
@@ -74,12 +71,7 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
     '23:00',
   ];
   void _datePicker() {
-    showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime.now(),
-            lastDate: DateTime.now().add(const Duration(days: 7)))
-        .then((pickedDate) {
+    showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 7))).then((pickedDate) {
       if (pickedDate == null) {
         return;
       }
@@ -89,29 +81,38 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
     });
   }
 
-  Future<void> saveSlotData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String userEmail = prefs.getString("userEmail") ??
-        'default@example.com'; // Fetch the email, or use a default if not found
+  Future<void> createBooking() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString("token") ?? ''; // Retrieve the saved token
+    final String userDataString = prefs.getString("userData") ?? '{}'; // Retrieve the user data JSON string
+    final Map<String, dynamic> userData = json.decode(userDataString); // Decode the user data
+    final String userEmail = userData['email'] ?? 'default@example.com'; // Use the email from the decoded user data
 
     String slotDate = _dateController.text;
-    String slotTime = timeValues[selectedValue];
+
+    String arrivalTime = _arrivalTime; // Ensure this is formatted correctly for your backend
+    String leaveTime = _leaveTime; // Ensure this is formatted correctly for your backend
     String vehicleNumber = _vehicleNumberController.text;
 
-    // Specify the backend endpoint URL
-    Uri url = Uri.parse(
-        '${AppConstants.baseUrl}/book-slot'); // Replace with your actual backend URL
+     var uuid = const Uuid();
+    String bookingId = uuid.v4(); // Generate a unique UUID for bookingId
+
+    Uri url = Uri.parse('${AppConstants.baseUrl}/vehicleOwner/book-slot'); // Update the endpoint URL to the new path
 
     try {
-      // Send a POST request to the backend
-      final response = await http.post(
+       final response = await http.post(
         url,
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token", // Add the Authorization header with the token
+        },
         body: jsonEncode({
+          'bookingId': bookingId,
           'email': userEmail,
           'date': slotDate,
-          'startTime': slotTime,
-          'carNumber': vehicleNumber,
+          'arrivalTime': arrivalTime,
+          'leaveTime': leaveTime,
+          'vehicleNumber': vehicleNumber,
         }),
       );
 
@@ -120,9 +121,10 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
           const SnackBar(content: Text("Slot booking successful!!")),
         );
       } else {
+        Map<String, dynamic> responseBody = jsonDecode(response.body);
+        String errorMessage = responseBody['error'] ?? "Failed to book slot. Please try again.";
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text("Failed to book slot. Please try again.")),
+           SnackBar(content: Text(errorMessage)),
         );
       }
     } catch (e) {
@@ -131,7 +133,6 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
       );
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -181,61 +182,19 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                     ),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () async {
-                    final TimeOfDay? pickedTime = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (pickedTime != null) {
-                      setState(() {
-                        final String formattedTime = pickedTime.format(context);
-                        _displayTime = formattedTime;
-
-                        int closestIndex = timeValues.indexOf(formattedTime);
-                        if (closestIndex != -1) {
-                          selectedValue = closestIndex;
-                        }
-                      });
-                    }
-                  },
-                  child: Container(
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 226, 223, 223),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      width: double.infinity,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          const Icon(
-                            Icons.timer,
-                            color: Color(0xFFFFC700),
-                          ),
-                          const Text('Pick a Time'),
-                          Text(
-                            ' $_displayTime',
-                            style: const TextStyle(fontSize: 15),
-                          ),
-                        ],
-                      )),
-                ),
+                buildTimePickerWidget(context, "Arrival Time", _arrivalTime, (selectedTime) => _arrivalTime = selectedTime),
+                buildTimePickerWidget(context, "Leave Time", _leaveTime, (selectedTime) => _leaveTime = selectedTime),
                 if (isPickerVisible)
                   Container(
                     height: 100,
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                        color: const Color.fromARGB(142, 255, 255, 255),
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 6,
-                            offset: Offset(0, 2),
-                          )
-                        ]),
+                    decoration: BoxDecoration(color: const Color.fromARGB(142, 255, 255, 255), borderRadius: BorderRadius.circular(10), boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(0, 2),
+                      )
+                    ]),
                     child: CupertinoPicker(
                       itemExtent: 32,
                       onSelectedItemChanged: (int index) {
@@ -257,16 +216,13 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       width: double.infinity,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 6,
-                              offset: Offset(0, 2),
-                            )
-                          ]),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 6,
+                          offset: Offset(0, 2),
+                        )
+                      ]),
                       child: const Row(
                         children: <Widget>[
                           Icon(Icons.check_circle),
@@ -302,17 +258,13 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                           decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 170, 168, 168),
-                                  width: 2.0),
+                              borderSide: const BorderSide(color: Color.fromARGB(255, 170, 168, 168), width: 2.0),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 170, 168, 168),
-                                  width: 2.0),
+                              borderSide: const BorderSide(color: Color.fromARGB(255, 170, 168, 168), width: 2.0),
                             ),
-                            hintText: 'C 9719 LJ',
+                             hintText: 'ABC123',
                           ),
                         ),
                       ),
@@ -324,18 +276,15 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
-                      saveSlotData();
+                       createBooking();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFFC700),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                     ),
                     child: const Text(
                       'Confirm',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 255, 255, 255)),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255)),
                     ),
                   ),
                 ),
@@ -346,11 +295,55 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
         onWillPop: () async {
           Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => const SlotArrangementScreen()),
+            MaterialPageRoute(builder: (context) => const SlotArrangementScreen()),
           );
           return false;
         });
+  }
+
+  GestureDetector buildTimePickerWidget(BuildContext context, String timeLabel, String timeValue, Function(String) onTimeSelected) {
+    return GestureDetector(
+      onTap: () async {
+        final TimeOfDay? pickedTime = await showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.now(),
+        );
+        if (pickedTime != null) {
+          setState(() {
+            final String formattedTime = pickedTime.format(context);
+            onTimeSelected(formattedTime);
+
+            // Optionally, update the closest index for the selected time
+            // int closestIndex = timeValues.indexOf(formattedTime);
+            // if (closestIndex != -1) {
+            //   selectedValue = closestIndex;
+            // }
+          });
+        }
+      },
+      child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 226, 223, 223),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          padding: const EdgeInsets.all(16),
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              const Icon(
+                Icons.timer,
+                color: Color(0xFFFFC700),
+              ),
+              Text(timeLabel),
+              Text(
+                ' $timeValue',
+                style: const TextStyle(fontSize: 15),
+              ),
+            ],
+          )),
+    );
   }
 }
 
@@ -359,7 +352,6 @@ class NavigationDrawer extends StatefulWidget {
   @override
   State<NavigationDrawer> createState() => _NavigationDrawerState();
 }
-
 class _NavigationDrawerState extends State<NavigationDrawer> {
   String userEmail = '';
   Map<String, dynamic> profileData = {};
@@ -370,7 +362,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     // fetchProfileData();
     getUserData();
   }
-
   getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -378,12 +369,10 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
       developer.log("email: $userEmail");
     });
   }
-
   // Future<void> fetchProfileData() async {
   //   await getUserData();
   //   try {
-  //     final response = await http
-  //         .get(Uri.parse('${AppConstants.baseUrl}/getuserdetails/$userEmail'));
+  //     final response = await http.get(Uri.parse('${AppConstants.baseUrl}/getuserdetails/$userEmail'));
   //     if (response.statusCode == 200) {
   //       setState(() {
   //         profileData = json.decode(response.body);
@@ -396,7 +385,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
   //     developer.log('Error fetching profile details: $error');
   //   }
   // }
-
   @override
   Widget build(BuildContext context) => Drawer(
         child: SingleChildScrollView(
@@ -448,8 +436,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             title: const Text('profile'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const Profile()));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Profile()));
             },
           ),
           ListTile(
@@ -457,8 +444,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               title: const Text('History'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const HistoryScreen()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HistoryScreen()));
               }),
           ListTile(
             leading: const Icon(Icons.payment),
@@ -494,13 +480,11 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             onTap: () async {
               //
               logOut();
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
             },
           ),
         ]),
       );
 }
-
 // TODO: Remove the JWT token from local storage
 logOut() {}
