@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 import '../../models/booking_model.dart';
 
 class BookingConfirmationScreen extends StatelessWidget {
-  final Booking booking; // Add this line
+  final Booking booking; // Your Booking object
 
-  // Modify the constructor to accept a Booking object
   const BookingConfirmationScreen({Key? key, required this.booking}) : super(key: key);
 
   @override
@@ -23,17 +22,54 @@ class BookingConfirmationScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Email: ${booking.email}'),
-            Text('Arrival Time: ${booking.arrivalTime}'),
-            Text('Leave Time: ${booking.leaveTime}'),
-            Text('Vehicle Number: ${booking.vehicleNumber}'),
-            Text('Parking Slot ID: ${booking.parkingSlotId}'),
-            // Add more details as needed
+            DataTable(
+              columns: const [
+                DataColumn(label: Text('Detail')),
+                DataColumn(label: Text('Value')),
+              ],
+              rows: [
+                DataRow(cells: [
+                  const DataCell(Text('Vehicle Number')),
+                  DataCell(Text(booking.vehicleNumber)),
+                ]),
+                // Assuming booking.date exists and you want to display it
+                DataRow(cells: [
+                  const DataCell(Text('Date')),
+                  DataCell(Text(booking.date.toString())), // Add your booking date here
+                ]),
+                DataRow(cells: [
+                  const DataCell(Text('Arrival Time')),
+                  DataCell(Text(booking.arrivalTime)),
+                ]),
+                DataRow(cells: [
+                  const DataCell(Text('Leave Time')),
+                  DataCell(Text(booking.leaveTime)),
+                ]),
+                DataRow(cells: [
+                  const DataCell(Text('Parking Slot ID')),
+                  DataCell(Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: const Color(0xFFFFC700),
+                    ),
+                    child: const Text(
+                      'Select a Slot',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )),
+                ]),
+              ],
+            ),
           ],
         ),
       ),
