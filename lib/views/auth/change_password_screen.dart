@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
 
 import '../../util/app_constants.dart';
-import '/views/login/login_screen.dart';
+import 'login_screen.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});

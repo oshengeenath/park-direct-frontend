@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
 import '../../util/app_constants.dart';
-import '../login/login_screen.dart';
+import '../auth/login_screen.dart';
 import 'history_screen.dart';
 import '../profile/profile.dart';
 
@@ -492,11 +492,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               style: TextStyle(color: Colors.red),
             ),
             onTap: () async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              prefs.remove("userEmail");
-              prefs.remove("slotDate");
-              prefs.remove("slotTime");
-              prefs.remove("vehicleNumber");
+              //
+              logOut();
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const LoginScreen()));
             },
@@ -504,3 +501,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
         ]),
       );
 }
+
+// TODO: Remove the JWT token from local storage
+logOut() {}
