@@ -30,9 +30,13 @@ class _LoginScreenState extends State<LoginScreen> {
           "password": _passwordController.text,
         }),
       );
+
       if (response.statusCode == 200) {
-        developer.log('User logged successfully');
-        saveUserEmail();
+        final responseData = json.decode(response.body);
+
+        // Assuming the response data contains a 'user' object and a 'token' string
+        saveUserLocally(responseData['user'], responseData['token']);
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SlotArrangementScreen()),
@@ -53,12 +57,19 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
   }
-  saveUserEmail() async {
+
+  Future<void> saveUserLocally(Map<String, dynamic> userData, String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String userEmail = _emailController.text;
-    await prefs.setString("userEmail", userEmail);
-    developer.log("Email saved to SharedPreferences: $userEmail");
+
+    // Save the entire user data as a JSON string
+    await prefs.setString("userData", jsonEncode(userData));
+
+    // Save the token
+    await prefs.setString("token", token);
+
+    developer.log("User data and token saved to SharedPreferences");
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +94,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-          
             Column(
               children: [
                 const Align(
@@ -94,7 +104,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontSize: 12,
                     ),
                   ),
-                 
                 ),
                 const SizedBox(
                   height: 8,
@@ -105,11 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: BoxDecoration(
                     color: const Color.fromARGB(255, 226, 223, 223),
                     borderRadius: BorderRadius.circular(30),
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
-                  prefixIcon: const Icon(
-                    Icons.phone_android_rounded,
-                    color: Colors.grey,
                   child: TextField(
                     controller: _emailController,
                     decoration: InputDecoration(
@@ -119,17 +124,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
-                       ),
-                      
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.phone_android_rounded,
+                        color: Colors.grey,
                       ),
                       hintText: 'user@gmail.com',
                       hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                     ),
                   ),
-                  
+                ),
               ],
             ),
-            
             Column(
               children: [
                 const Align(
@@ -140,7 +147,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontSize: 12,
                     ),
                   ),
-                
                 ),
                 const SizedBox(
                   height: 8,
@@ -151,9 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: BoxDecoration(
                     color: const Color.fromARGB(255, 226, 223, 223),
                     borderRadius: BorderRadius.circular(30),
-                   
                   ),
-                 
                   child: TextField(
                     controller: _passwordController,
                     obscureText: !_isPasswordVisible,
@@ -184,14 +188,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       hintText: '********',
                       hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                     ),
-                   
                   ),
-                 
                 ),
-              
               ],
             ),
-            
             GestureDetector(
               onTap: () {
                 Navigator.push(

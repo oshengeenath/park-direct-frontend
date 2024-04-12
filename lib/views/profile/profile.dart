@@ -1,10 +1,8 @@
-// import 'dart:convert';
-// import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:developer' as developer;
 
-// import '../../util/app_constants.dart';
 import '../book_slots/slot_arrangement_screen.dart';
 
 class Profile extends StatefulWidget {
@@ -12,45 +10,27 @@ class Profile extends StatefulWidget {
   @override
   State<Profile> createState() => _ProfileState();
 }
-
 class _ProfileState extends State<Profile> {
   String userEmail = '';
   Map<String, dynamic> profileData = {};
   @override
   void initState() {
     super.initState();
-    getUserData();
-    // TODO: Get user details thourgh login endpoint
-    // fetchProfileData();
-  }
 
-  getUserData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+     _fetchUserData();
+  }
+  Future<void> _fetchUserData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String userDataString = prefs.getString("userData") ?? '{}'; // Retrieve the user data JSON string
+    final Map<String, dynamic> userData = json.decode(userDataString); // Decode the JSON string
+
     setState(() {
-      userEmail = prefs.getString('userEmail') ?? '';
-      developer.log("email: $userEmail");
+
+         profileData = userData;
     });
   }
 
-  // Future<void> fetchProfileData() async {
-  //   await getUserData();
-  //   try {
-  //     final response = await http
-  //         .get(Uri.parse('${AppConstants.baseUrl}/getuserdetails/$userEmail'));
-  //     if (response.statusCode == 200) {
-  //       setState(() {
-  //         profileData = json.decode(response.body);
-  //       });
-  //       developer.log('user data: $profileData');
-  //     } else {
-  //       throw Exception('Failed to get profile details');
-  //     }
-  //   } catch (error) {
-  //     developer.log('Error fetching profile details: $error');
-  //   }
-  // }
-
-  @override
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -60,21 +40,25 @@ class _ProfileState extends State<Profile> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => const SlotArrangementScreen()),
+              MaterialPageRoute(builder: (context) => const SlotArrangementScreen()),
             );
           },
         ),
+        centerTitle: true,
         title: const Text(
-          '    Profile',
+
+           'Profile',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
-      body: SingleChildScrollView(
+
+       body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Container(
               alignment: Alignment.topRight,
@@ -85,10 +69,7 @@ class _ProfileState extends State<Profile> {
             ),
             Row(
               children: [
-                const SizedBox(
-                  width: 30,
-                ),
-                Container(
+                  Container(
                   alignment: Alignment.topLeft,
                   child: Image.asset(
                     'assets/profile.png',
@@ -96,25 +77,22 @@ class _ProfileState extends State<Profile> {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 40,
+            const SizedBox( 
+               height: 16,
             ),
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
                 '       Personal Details',
+                'Personal Details',
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
             Container(
-              width: 350,
-              height: 50,
+               width: double.infinity,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 226, 223, 223),
                 borderRadius: BorderRadius.circular(30),
@@ -127,17 +105,12 @@ class _ProfileState extends State<Profile> {
                     color: Colors.grey,
                   ),
                   hintText: profileData["fullname"],
-                  hintStyle:
-                      const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              width: 350,
-              height: 50,
+             Container(
+               width: double.infinity,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 226, 223, 223),
                 borderRadius: BorderRadius.circular(30),
@@ -150,17 +123,12 @@ class _ProfileState extends State<Profile> {
                     color: Colors.grey,
                   ),
                   hintText: profileData["email"],
-                  hintStyle:
-                      const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              width: 350,
-              height: 50,
+             Container(
+               width: double.infinity,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 226, 223, 223),
                 borderRadius: BorderRadius.circular(30),
@@ -173,43 +141,36 @@ class _ProfileState extends State<Profile> {
                     color: Colors.grey,
                   ),
                   hintText: profileData["mobilenum"],
-                  hintStyle:
-                      const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                 ),
               ),
             ),
-            const SizedBox(height: 30),
             const SizedBox(
-              height: 40,
+              height: 16,
             ),
             SizedBox(
-              height: 50,
-              width: 340,
+              height: 40,
+              width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const SlotArrangementScreen()),
+                    MaterialPageRoute(builder: (context) => const SlotArrangementScreen()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFFC700),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                 ),
                 child: const Text(
                   'Back',
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
               ),
             ),
             const SizedBox(
-              height: 20,
-            ),
+               height: 16,
+            )
           ],
         ),
       ),
