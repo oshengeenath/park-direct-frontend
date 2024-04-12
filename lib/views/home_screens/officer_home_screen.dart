@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:park_direct_frontend/views/officer_confirm_slot/my_profile_screen.dart';
+import 'package:park_direct_frontend/views/officer_confirm_slot/parking_slots_screen.dart';
+import 'package:park_direct_frontend/views/officer_confirm_slot/pending_requests_screen.dart';
+import 'package:park_direct_frontend/views/officer_confirm_slot/today_arrivals_screen.dart';
 
 class OfficerHomeScreen extends StatelessWidget {
   const OfficerHomeScreen({super.key});
@@ -30,22 +34,42 @@ class OfficerHomeScreen extends StatelessWidget {
             ItemCard(
               iconImage: "assets/officer_home_icons/icon1.png",
               cardText: "Pending requests",
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PendingRequestsScreen()),
+                );
+              },
             ),
             ItemCard(
               iconImage: "assets/officer_home_icons/icon2.png",
               cardText: "Today arrivals",
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TodayArrivalsScreen()),
+                );
+              },
             ),
             ItemCard(
               iconImage: "assets/officer_home_icons/icon3.png",
               cardText: "Parking slots",
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ParkingSlotsScreen()),
+                );
+              },
             ),
             ItemCard(
               iconImage: "assets/officer_home_icons/icon4.png",
               cardText: "My profile",
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyProfileScreen()),
+                );
+              },
             ),
             const SizedBox(
               height: 16,

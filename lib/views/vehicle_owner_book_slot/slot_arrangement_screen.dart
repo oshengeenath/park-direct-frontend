@@ -313,11 +313,6 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
             final String formattedTime = pickedTime.format(context);
             onTimeSelected(formattedTime);
 
-            // Optionally, update the closest index for the selected time
-            // int closestIndex = timeValues.indexOf(formattedTime);
-            // if (closestIndex != -1) {
-            //   selectedValue = closestIndex;
-            // }
           });
         }
       },
@@ -369,22 +364,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
       developer.log("email: $userEmail");
     });
   }
-  // Future<void> fetchProfileData() async {
-  //   await getUserData();
-  //   try {
-  //     final response = await http.get(Uri.parse('${AppConstants.baseUrl}/getuserdetails/$userEmail'));
-  //     if (response.statusCode == 200) {
-  //       setState(() {
-  //         profileData = json.decode(response.body);
-  //       });
-  //       developer.log('user data: $profileData');
-  //     } else {
-  //       throw Exception('Failed to get profile details');
-  //     }
-  //   } catch (error) {
-  //     developer.log('Error fetching profile details: $error');
-  //   }
-  // }
+
   @override
   Widget build(BuildContext context) => Drawer(
         child: SingleChildScrollView(

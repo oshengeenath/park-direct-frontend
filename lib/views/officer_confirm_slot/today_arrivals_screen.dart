@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class PendingRequestsScreen extends StatelessWidget {
-  const PendingRequestsScreen({super.key});
+class TodayArrivalsScreen extends StatelessWidget {
+  const TodayArrivalsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +10,7 @@ class PendingRequestsScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: const Color(0xFFFFC700),
         title: const Text(
-          'Pending Requests',
+          'Today Arrivals',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
