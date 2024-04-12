@@ -1,5 +1,4 @@
 // ignore_for_file: use_super_parameters
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,9 +16,11 @@ class SlotArrangementScreen extends StatefulWidget {
   @override
   State<SlotArrangementScreen> createState() => _SlotArrangementScreenState();
 }
+
 class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
   final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _vehicleNumberController = TextEditingController();
+  final TextEditingController _vehicleNumberController =
+      TextEditingController();
   String _displayTime = '00:00';
   DateTime pickedDate = DateTime.now();
   int dateFieldData = 0;
@@ -32,16 +33,19 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
       isPickerVisible = !isPickerVisible;
     });
   }
+
   void updateSelectedValue(int newValue) {
     setState(() {
       selectedValue = newValue;
     });
   }
+
   @override
   void initState() {
     super.initState();
     const NavigationDrawer();
   }
+
   List<String> timeValues = [
     '00:00',
     '01:00',
@@ -69,7 +73,12 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
     '23:00',
   ];
   void _datePicker() {
-    showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 7))).then((pickedDate) {
+    showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime.now(),
+            lastDate: DateTime.now().add(const Duration(days: 7)))
+        .then((pickedDate) {
       if (pickedDate == null) {
         return;
       }
@@ -79,19 +88,47 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
     });
   }
 
-  // TODO: Instead of this method, save these details in the backend
-  saveSlotData() async {
+  Future<void> saveSlotData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userEmail = prefs.getString("userEmail") ??
+        'default@example.com'; // Fetch the email, or use a default if not found
+
     String slotDate = _dateController.text;
     String slotTime = timeValues[selectedValue];
     String vehicleNumber = _vehicleNumberController.text;
-    await prefs.setString("slotDate", slotDate);
-    await prefs.setString("slotTime", slotTime);
-    await prefs.setString("vehicleNumber", vehicleNumber);
-    developer.log('Slot Date: $slotDate');
-    developer.log('Slot Time: $slotTime');
-    developer.log('Vehicle Number: $vehicleNumber');
+
+    // Specify the backend endpoint URL
+    Uri url = Uri.parse(
+        '${AppConstants.baseUrl}/book-slot'); // Replace with your actual backend URL
+
+    try {
+      // Send a POST request to the backend
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          'email': userEmail,
+          'date': slotDate,
+          'startTime': slotTime,
+          'carNumber': vehicleNumber,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Handle the response from the backend
+        final data = jsonDecode(response.body);
+        // Show success message or handle data
+        developer.log("Slot booking successful: $data");
+      } else {
+        // Handle the error
+        developer.log("Failed to book slot: ${response.body}");
+      }
+    } catch (e) {
+      // Handle any errors that occur during the POST request
+      developer.log("Error booking slot: $e");
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -186,13 +223,16 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                   Container(
                     height: 100,
                     width: double.infinity,
-                    decoration: BoxDecoration(color: const Color.fromARGB(142, 255, 255, 255), borderRadius: BorderRadius.circular(10), boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 6,
-                        offset: Offset(0, 2),
-                      )
-                    ]),
+                    decoration: BoxDecoration(
+                        color: const Color.fromARGB(142, 255, 255, 255),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
+                          )
+                        ]),
                     child: CupertinoPicker(
                       itemExtent: 32,
                       onSelectedItemChanged: (int index) {
@@ -214,13 +254,16 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       width: double.infinity,
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 6,
-                          offset: Offset(0, 2),
-                        )
-                      ]),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 6,
+                              offset: Offset(0, 2),
+                            )
+                          ]),
                       child: const Row(
                         children: <Widget>[
                           Icon(Icons.check_circle),
@@ -256,11 +299,15 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                           decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: Color.fromARGB(255, 170, 168, 168), width: 2.0),
+                              borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 170, 168, 168),
+                                  width: 2.0),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: Color.fromARGB(255, 170, 168, 168), width: 2.0),
+                              borderSide: const BorderSide(
+                                  color: Color.fromARGB(255, 170, 168, 168),
+                                  width: 2.0),
                             ),
                             hintText: 'C 9719 LJ',
                           ),
@@ -278,11 +325,14 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFFC700),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)),
                     ),
                     child: const Text(
                       'Confirm',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 255, 255, 255)),
                     ),
                   ),
                 ),
@@ -293,17 +343,20 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
         onWillPop: () async {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const SlotArrangementScreen()),
+            MaterialPageRoute(
+                builder: (context) => const SlotArrangementScreen()),
           );
           return false;
         });
   }
 }
+
 class NavigationDrawer extends StatefulWidget {
   const NavigationDrawer({Key? key}) : super(key: key);
   @override
   State<NavigationDrawer> createState() => _NavigationDrawerState();
 }
+
 class _NavigationDrawerState extends State<NavigationDrawer> {
   String userEmail = '';
   Map<String, dynamic> profileData = {};
@@ -313,6 +366,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     fetchProfileData();
     getUserData();
   }
+
   getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -320,10 +374,12 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
       developer.log("email: $userEmail");
     });
   }
+
   Future<void> fetchProfileData() async {
     await getUserData();
     try {
-      final response = await http.get(Uri.parse('${AppConstants.baseUrl}/getuserdetails/$userEmail'));
+      final response = await http
+          .get(Uri.parse('${AppConstants.baseUrl}/getuserdetails/$userEmail'));
       if (response.statusCode == 200) {
         setState(() {
           profileData = json.decode(response.body);
@@ -336,6 +392,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
       developer.log('Error fetching profile details: $error');
     }
   }
+
   @override
   Widget build(BuildContext context) => Drawer(
         child: SingleChildScrollView(
@@ -387,7 +444,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             title: const Text('profile'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Profile()));
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const Profile()));
             },
           ),
           ListTile(
@@ -395,7 +453,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               title: const Text('History'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HistoryScreen()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const HistoryScreen()));
               }),
           ListTile(
             leading: const Icon(Icons.payment),
@@ -434,7 +493,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               prefs.remove("slotDate");
               prefs.remove("slotTime");
               prefs.remove("vehicleNumber");
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const LoginScreen()));
             },
           ),
         ]),
