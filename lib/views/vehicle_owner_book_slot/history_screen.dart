@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:park_direct_frontend/util/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
-
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
   @override
@@ -20,22 +19,38 @@ class _HistoryScreenState extends State<HistoryScreen> {
     fetchHistoryData();
     getUserData();
   }
-  getUserData() async {
+  Future<void> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userEmail = prefs.getString('userEmail') ?? '';
-      developer.log("email: $userEmail");
-    });
+    // String? token = prefs.getString("token");
+    String? userDataJson = prefs.getString("userData");
+    Map<String, dynamic>? userData = userDataJson != null ? jsonDecode(userDataJson) : {};
+    if (userData != null) {
+      // Assuming 'email' is a key in userData map. Adjust if it's nested or named differently.
+      String? email = userData['email'];
+      if (email != null) {
+        setState(() {
+          userEmail = email;
+          developer.log("email: $userEmail");
+        });
+      } else {
+        developer.log("Email was not found in stored user data.");
+      }
+    } else {
+      developer.log("No user data found in SharedPreferences.");
+    }
   }
   Future<void> fetchHistoryData() async {
-    await getUserData();
+    await getUserData(); // Make sure userEmail is fetched before making the API call
     try {
-      final response = await http.get(Uri.parse('${AppConstants.baseUrl}/bookings/$userEmail'));
+      final response = await http.get(
+        Uri.parse('${AppConstants.baseUrl}/vehicleOwner/get-all-bookings/$userEmail'),
+        // Add headers if necessary, for example, for authorization
+      );
       if (response.statusCode == 200) {
         developer.log('body: ${response.body}');
         setState(() {
           historyData = json.decode(response.body);
-          isLoading = false; // Data loading completed
+          isLoading = false;
         });
         developer.log('search data: $historyData');
       } else {
@@ -43,21 +58,23 @@ class _HistoryScreenState extends State<HistoryScreen> {
       }
     } catch (error) {
       developer.log('Error fetching data: $error');
+      setState(() {
+        isLoading = false; // Ensure UI is updated even in case of an error
+      });
     }
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('History'),
-        actions: const <Widget>[
-          // IconButton(
-          //   icon: Icon(Icons.search),
-          //   onPressed: () {
-          //     // Handle search functionality
-          //   },
-          // ),
-        ],
+        centerTitle: true,
+        backgroundColor: const Color(0xFFFFC700),
+        title: const Text(
+          'History',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: Stack(
         children: [
@@ -81,31 +98,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ),
                   child: Column(
                     children: [
-                      // Container(
-                      //   alignment: Alignment.topLeft,
-                      //   child: Text(
-                      //     ' Result',
-                      //     style: TextStyle(
-                      //       fontSize: 20,
-                      //       color: Color.fromARGB(255, 178, 164, 164),
-                      //     ),
-                      //   ),
-                      // ),
                       isLoading
-                          ? const CircularProgressIndicator() // Show loading indicator while data is being fetched
+                          ? const CircularProgressIndicator()
                           : historyData.isEmpty
                               ? const Column(
                                   children: [
                                     SizedBox(
                                       height: 170,
                                     ),
-                                    // Center(
-                                    //   child: Image.asset(
-                                    //     'assets/Logo3.jpg',
-                                    //     height: 200,
-                                    //     width: 200,
-                                    //   ),
-                                    // ),
                                     SizedBox(
                                       height: 20,
                                     ),
@@ -142,14 +142,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     return Container(
                                       margin: const EdgeInsets.only(bottom: 10),
                                       child: Card(
-                                        color: const Color.fromARGB(255, 226, 223, 223),
-                                        elevation: 8,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         child: Container(
                                           constraints: const BoxConstraints(maxWidth: 300),
-                                          padding: const EdgeInsets.all(10), // Add padding for better appearance
+                                          padding: const EdgeInsets.all(10),
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
@@ -176,7 +174,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                     width: 30,
                                                   ),
                                                   Text(
-                                                    item['carNumber'],
+                                                    item['vehicleNumber'],
                                                     style: const TextStyle(
                                                       fontSize: 15,
                                                       fontWeight: FontWeight.bold,
@@ -199,12 +197,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                 children: [
                                                   const SizedBox(width: 80),
                                                   Text(
-                                                    '${item['slot']}  |  ${item['startTime']}',
+                                                    '${item['parkingSlotId']}  |  ${item['arrivalTime']}',
                                                   )
                                                 ],
                                               ),
                                               const SizedBox(height: 10),
-                                              // Add more rows for other data items
                                             ],
                                           ),
                                         ),
@@ -217,29 +214,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 ),
                 const SizedBox(
                   width: 20,
-                ),
-                SizedBox(
-                  height: 50,
-                  width: 280,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      // Handle button press
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFFC700),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'Back',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 255, 255, 255),
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),
