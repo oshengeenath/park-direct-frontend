@@ -26,6 +26,12 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
   int dateFieldData = 0;
   int selectedValue = 0;
   bool isPickerVisible = false;
+
+    bool areFieldsValid() {
+    // Check if any of the fields is empty
+    return _dateController.text.isNotEmpty && _arrivalTime != '00:00' && _leaveTime != '00:00' && _vehicleNumberController.text.isNotEmpty;
+  }
+
   void togglePickerVisibility() {
     setState(() {
       isPickerVisible = !isPickerVisible;
@@ -108,18 +114,24 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
       );
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Slot booking successful!!")),
+          const SnackBar(
+            content: Text("Slot booking successful!!"), backgroundColor: Colors.green, // This makes the SnackBar's background color red
+          ),
         );
       } else {
         Map<String, dynamic> responseBody = jsonDecode(response.body);
         String errorMessage = responseBody['error'] ?? "Failed to book slot. Please try again.";
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage)),
+          SnackBar(
+            content: Text(errorMessage), backgroundColor: Colors.red, // This makes the SnackBar's background color red
+          ),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error booking slot: $e")),
+        SnackBar(
+          content: Text("Error booking slot: $e"), backgroundColor: Colors.red, // This makes the SnackBar's background color red
+        ),
       );
     }
   }
@@ -266,7 +278,18 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
-                      createBooking();
+                      if (areFieldsValid()) {
+                        // All fields are filled, proceed with booking
+                        await createBooking();
+                      } else {
+                        // One or more fields are empty, show an error message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Please fill all the details before confirming."),
+                            backgroundColor: Colors.red, // This makes the SnackBar's background color red
+                          ),
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFFC700),
