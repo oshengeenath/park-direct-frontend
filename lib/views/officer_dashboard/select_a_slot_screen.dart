@@ -36,6 +36,9 @@ class _SelectASlotScreenState extends State<SelectASlotScreen> {
         loadedSlots.add(ParkingSlot.fromJson(slot));
         print('Loaded slot: ${slot['slotId']}'); // Debugging line
       }
+
+      // Sort slots by slotId in ascending order
+      loadedSlots.sort((a, b) => a.slotId.compareTo(b.slotId));
       setState(() {
         parkingSlots = loadedSlots;
         isLoading = false;
@@ -115,7 +118,7 @@ class _SelectASlotScreenState extends State<SelectASlotScreen> {
               ),
               child: Center(
                 child: Text(
-                  'S${index + 1}',
+                  parkingSlot.slotId,
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
