@@ -159,11 +159,21 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
 
     if (response.statusCode == 200) {
       // Handle successful response
-      print('Booking confirmed successfully');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Booking confirmed successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
       // Optionally, navigate away or show a success message
     } else {
       // Handle error
-      print('Failed to confirm booking');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to confirm booking.'),
+          backgroundColor: Colors.red,
+        ),
+      );
       // Optionally, show an error message
     }
 
