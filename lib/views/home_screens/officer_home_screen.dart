@@ -3,6 +3,7 @@ import 'package:park_direct_frontend/views/officer_dashboard/parking_slots_scree
 import 'package:park_direct_frontend/views/officer_dashboard/pending_requests_screen.dart';
 import 'package:park_direct_frontend/views/officer_dashboard/today_arrivals_screen.dart';
 import 'package:park_direct_frontend/views/profile/profile_screen.dart';
+import '../officer_dashboard/confirmed_requests_screen.dart';
 
 class OfficerHomeScreen extends StatelessWidget {
   const OfficerHomeScreen({super.key});
@@ -37,6 +38,16 @@ class OfficerHomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const PendingRequestsScreen()),
+                );
+              },
+            ),
+            ItemCard(
+              iconImage: "assets/officer_home_icons/icon5.png",
+              cardText: "Confirmed requests",
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ConfirmedRequestsScreen()),
                 );
               },
             ),
