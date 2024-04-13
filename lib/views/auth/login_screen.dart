@@ -49,18 +49,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login Successful!')),
+          const SnackBar(
+            content: Text('Login Successful!'),
+            backgroundColor: Colors.green,
+          ),
         );
       } else {
-        developer.log('Failed to login user. Error: ${response.statusCode}');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login Failed: ${response.statusCode}')),
+          const SnackBar(
+            content: Text('Email address or password is incorrect'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } catch (e) {
-      developer.log('Failed to login user. Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Network Error: Please try again later.')),
+        const SnackBar(
+          content: Text('Network Error: Please try again later.'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
