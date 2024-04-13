@@ -7,11 +7,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'dart:developer' as developer;
-
 import '../../util/app_constants.dart';
 import '../auth/login_screen.dart';
 import 'history_screen.dart';
-import '../profile/profile.dart';
+import '../profile/profile_screen.dart';
+
 class SlotArrangementScreen extends StatefulWidget {
   const SlotArrangementScreen({super.key});
   @override
@@ -20,15 +20,12 @@ class SlotArrangementScreen extends StatefulWidget {
 class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _vehicleNumberController = TextEditingController();
-
   String _arrivalTime = '00:00';
   String _leaveTime = '00:00';
-
   DateTime pickedDate = DateTime.now();
   int dateFieldData = 0;
   int selectedValue = 0;
   bool isPickerVisible = false;
-
   void togglePickerVisibility() {
     setState(() {
       isPickerVisible = !isPickerVisible;
@@ -80,27 +77,21 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
       });
     });
   }
-
   Future<void> createBooking() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token") ?? ''; // Retrieve the saved token
     final String userDataString = prefs.getString("userData") ?? '{}'; // Retrieve the user data JSON string
     final Map<String, dynamic> userData = json.decode(userDataString); // Decode the user data
     final String userEmail = userData['email'] ?? 'default@example.com'; // Use the email from the decoded user data
-
     String slotDate = _dateController.text;
-
     String arrivalTime = _arrivalTime; // Ensure this is formatted correctly for your backend
     String leaveTime = _leaveTime; // Ensure this is formatted correctly for your backend
     String vehicleNumber = _vehicleNumberController.text;
-
-     var uuid = const Uuid();
+    var uuid = const Uuid();
     String bookingId = uuid.v4(); // Generate a unique UUID for bookingId
-
     Uri url = Uri.parse('${AppConstants.baseUrl}/vehicleOwner/book-slot'); // Update the endpoint URL to the new path
-
     try {
-       final response = await http.post(
+      final response = await http.post(
         url,
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +106,6 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
           'vehicleNumber': vehicleNumber,
         }),
       );
-
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Slot booking successful!!")),
@@ -124,7 +114,7 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
         Map<String, dynamic> responseBody = jsonDecode(response.body);
         String errorMessage = responseBody['error'] ?? "Failed to book slot. Please try again.";
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text(errorMessage)),
+          SnackBar(content: Text(errorMessage)),
         );
       }
     } catch (e) {
@@ -264,7 +254,7 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                               borderRadius: BorderRadius.circular(30),
                               borderSide: const BorderSide(color: Color.fromARGB(255, 170, 168, 168), width: 2.0),
                             ),
-                             hintText: 'ABC123',
+                            hintText: 'ABC123',
                           ),
                         ),
                       ),
@@ -276,7 +266,7 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
-                       createBooking();
+                      createBooking();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFFC700),
@@ -300,7 +290,6 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
           return false;
         });
   }
-
   GestureDetector buildTimePickerWidget(BuildContext context, String timeLabel, String timeValue, Function(String) onTimeSelected) {
     return GestureDetector(
       onTap: () async {
@@ -312,7 +301,6 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
           setState(() {
             final String formattedTime = pickedTime.format(context);
             onTimeSelected(formattedTime);
-
           });
         }
       },
@@ -341,7 +329,6 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
     );
   }
 }
-
 class NavigationDrawer extends StatefulWidget {
   const NavigationDrawer({Key? key}) : super(key: key);
   @override
@@ -353,10 +340,9 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
   @override
   void initState() {
     super.initState();
-    // TODO: Get user details thourgh login endpoint
-    // fetchProfileData();
     getUserData();
   }
+
   getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -364,7 +350,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
       developer.log("email: $userEmail");
     });
   }
-
   @override
   Widget build(BuildContext context) => Drawer(
         child: SingleChildScrollView(
@@ -416,7 +401,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             title: const Text('profile'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Profile()));
+
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ProfileScreen()));
             },
           ),
           ListTile(
@@ -424,29 +410,9 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               title: const Text('History'),
               onTap: () {
                 Navigator.pop(context);
+
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HistoryScreen()));
               }),
-          ListTile(
-            leading: const Icon(Icons.payment),
-            title: const Text('Payment'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.support_agent),
-            title: const Text('Support'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.people),
-            title: const Text('Community'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
           const ListTile(),
           ListTile(
             leading: const Icon(
@@ -459,12 +425,27 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             ),
             onTap: () async {
               //
-              logOut();
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+              logOut(context);
             },
           ),
         ]),
       );
 }
-// TODO: Remove the JWT token from local storage
-logOut() {}
+Future<void> logOut(BuildContext context) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  // Remove the saved token and user data
+  await prefs.remove('token');
+  await prefs.remove('userData');
+  // Add any other keys you have saved and wish to clear upon logout
+
+  developer.log("User logged out. Data cleared from SharedPreferences.");
+
+  // Navigate to the login screen
+  // Make sure to replace the navigation with whatever fits your app structure
+  // For example, if you're using named routes, it could look different
+  Navigator.of(context).pushAndRemoveUntil(
+    MaterialPageRoute(builder: (context) => const LoginScreen()),
+    (Route<dynamic> route) => false,
+  );
+}

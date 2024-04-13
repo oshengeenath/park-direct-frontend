@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:park_direct_frontend/views/officer_dashboard/my_profile_screen.dart';
 import 'package:park_direct_frontend/views/officer_dashboard/parking_slots_screen.dart';
 import 'package:park_direct_frontend/views/officer_dashboard/pending_requests_screen.dart';
 import 'package:park_direct_frontend/views/officer_dashboard/today_arrivals_screen.dart';
+import 'package:park_direct_frontend/views/profile/profile_screen.dart';
+
 class OfficerHomeScreen extends StatelessWidget {
   const OfficerHomeScreen({super.key});
-
-@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -66,7 +66,7 @@ class OfficerHomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const MyProfileScreen()),
+                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
                 );
               },
             ),
@@ -79,19 +79,16 @@ class OfficerHomeScreen extends StatelessWidget {
     );
   }
 }
-
 class ItemCard extends StatelessWidget {
   final String iconImage; // Path to the icon image
   final String cardText; // Text to be displayed on the card
   final VoidCallback onPressed; // Callback function for tap event
-
   const ItemCard({
     super.key,
     required this.iconImage,
     required this.cardText,
     required this.onPressed,
   });
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
