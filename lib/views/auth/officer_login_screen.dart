@@ -277,7 +277,7 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
           ),
         ),
       ),
+    ),
     );
-    ));
   }
 }
