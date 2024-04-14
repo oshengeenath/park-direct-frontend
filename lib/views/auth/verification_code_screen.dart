@@ -8,7 +8,7 @@ import 'dart:developer' as developer;
 
 import '../../util/app_constants.dart';
 import 'vehicle_owner_login_screen.dart';
-import 'sign_up_screen.dart';
+import 'register_screen_2.dart';
 
 class VerificationCodeScreen extends StatefulWidget {
   const VerificationCodeScreen({super.key});
@@ -47,7 +47,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
       developer.log('Verification code successfully');
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const SignUpScreen()),
+        MaterialPageRoute(builder: (context) => const RegisterScreen2()),
       );
     } else {
       developer.log('Failed to save verification code. Error: ${response.body}');
@@ -56,10 +56,13 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
                   onPressed: () {
@@ -73,9 +76,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(
-                  width: 140,
-                ),
                 Container(
                   alignment: Alignment.topRight,
                   child: Image.asset(
@@ -87,84 +87,81 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
             Container(
               alignment: Alignment.topLeft,
               child: Text(
-                '    Enter Verification \n    Code',
+                'Enter Verification\nCode',
                 style: GoogleFonts.lato(fontSize: 25, color: const Color.fromARGB(255, 0, 0, 0), fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(
-              height: 30,
             ),
             Align(
               alignment: Alignment.topLeft,
               child: Text(
-                '     Please enter the verification code we sent to your email \n     $registerEmail',
+                'Please enter the verification code we sent to your email\n$registerEmail',
                 style: const TextStyle(
                   fontSize: 14,
                 ),
               ),
             ),
-            const SizedBox(
-              height: 40,
-            ),
-            const Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                '     Verification Code',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+            Column(
+              children: [
+                const Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Verification Code',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              width: 350,
-              height: 50,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 223, 223),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TextField(
-                controller: _verificationCodeController,
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
+                const SizedBox(
+                  height: 16,
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 226, 223, 223),
                     borderRadius: BorderRadius.circular(30),
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                  child: TextField(
+                    controller: _verificationCodeController,
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.verified,
+                        color: Colors.grey,
+                      ),
+                      hintText: 'A3DVFE',
+                      hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                    ),
                   ),
-                  prefixIcon: const Icon(
-                    Icons.verified,
-                    color: Colors.grey,
                   ),
-                  hintText: 'A3DVFE',
-                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+              
+                const SizedBox(
+                  height: 16,
                 ),
-              ),
-            ),
-            const SizedBox(
-              height: 130,
-            ),
-            const Align(
-              alignment: Alignment.center,
-              child: Text(
-                'Resend Code',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
+              
+                const Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Resend Code',
+                    style: TextStyle(
+                      //fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
+              ],
             ),
             SizedBox(
-              height: 60,
-              width: 300,
+              height: 40,
+              width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
                   sendVerirficationCode();
@@ -175,7 +172,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 ),
                 child: Text(
                   'Verify',
-                  style: GoogleFonts.poppins(fontSize: 20, color: const Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold),
+                  style: GoogleFonts.poppins(color: Colors.black, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

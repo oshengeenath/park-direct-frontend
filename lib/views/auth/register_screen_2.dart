@@ -7,12 +7,14 @@ import 'dart:developer' as developer;
 import '../../util/app_constants.dart';
 import 'vehicle_owner_login_screen.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class RegisterScreen2 extends StatefulWidget {
+  const RegisterScreen2({super.key});
+
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<RegisterScreen2> createState() => _RegisterScreen2State();
 }
-class _SignUpScreenState extends State<SignUpScreen> {
+
+class _RegisterScreen2State extends State<RegisterScreen2> {
   bool isChecked = false;
   bool _obscureText = true;
   bool isPasswordStrong = true;
