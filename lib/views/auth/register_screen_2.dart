@@ -3,17 +3,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
-
 import '../../util/app_constants.dart';
 import 'vehicle_owner_login_screen.dart';
-
 class RegisterScreen2 extends StatefulWidget {
   const RegisterScreen2({super.key});
-
   @override
   State<RegisterScreen2> createState() => _RegisterScreen2State();
 }
-
 class _RegisterScreen2State extends State<RegisterScreen2> {
   bool isChecked = false;
   bool _obscureText = true;
@@ -38,8 +34,9 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
         'password': _passwordController.text,
       }),
     );
+
     if (response.statusCode == 200) {
-      developer.log('User sign-up  successfully');
+      developer.log('User sign-up successfully');
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const VehicleOwnerLoginScreen()),
@@ -51,8 +48,10 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Container(
               alignment: Alignment.topRight,
@@ -60,37 +59,30 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                 'assets/background1.png',
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
-                '      Please complete your profile to create ParkDirect \n      account',
+                'Please complete your profile to create ParkDirect account',
                 style: TextStyle(
                   fontSize: 15,
                 ),
               ),
             ),
-            const SizedBox(
-              height: 40,
-            ),
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
-                '       Your Name',
+                'Your Name',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(
-              height: 18,
-            ),
+           
             Container(
-              width: 350,
-              height: 50,
+              width: double.infinity,
+              height: 40,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 226, 223, 223),
                 borderRadius: BorderRadius.circular(30),
@@ -110,30 +102,26 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                     Icons.person,
                     color: Colors.grey,
                   ),
-                  hintText: 'Nimal Bandara',
-                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintText: 'John Doe',
+                  //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 25,
-            ),
+           
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
-                '       Email',
+                'Email',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(
-              height: 18,
-            ),
+            
             Container(
-              width: 350,
-              height: 50,
+              width: double.infinity,
+              height: 40,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 226, 223, 223),
                 borderRadius: BorderRadius.circular(30),
@@ -158,31 +146,27 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                     Icons.email,
                     color: Colors.grey,
                   ),
-                  hintText: 'nimal@domain.abc',
-                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintText: 'user@gmail.com',
+                  //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                   errorText: _isValidEmail ? null : 'Invalid email address',
                 ),
               ),
             ),
-            const SizedBox(
-              height: 25,
-            ),
+            
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
-                '       Mobile Number',
+                'Mobile Number',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(
-              height: 18,
-            ),
+            
             Container(
-              width: 350,
-              height: 50,
+              width: double.infinity,
+              height: 40,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 226, 223, 223),
                 borderRadius: BorderRadius.circular(30),
@@ -208,31 +192,27 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                     Icons.email,
                     color: Colors.grey,
                   ),
-                  hintText: '0756984562',
-                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintText: '077XXXXXXX',
+                  //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                   errorText: _isValidMobile ? null : 'Invalid Phone Number',
                 ),
               ),
             ),
-            const SizedBox(
-              height: 25,
-            ),
+            
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
-                '       Password',
+                'Password',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(
-              height: 18,
-            ),
+            
             Container(
-              width: 350,
-              height: 50,
+              width: double.infinity,
+              height: 40,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 226, 223, 223),
                 borderRadius: BorderRadius.circular(30),
@@ -270,18 +250,14 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                       ),
                     ),
                     hintText: '................',
-                    hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                    //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                     errorText: isPasswordStrong ? null : 'Use a strong Password'),
               ),
             ),
-            const SizedBox(
-              height: 40,
-            ),
+            
             Row(
               children: [
-                const SizedBox(
-                  width: 30,
-                ),
+                
                 Container(
                   width: 20,
                   height: 20,
@@ -317,12 +293,10 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                 )
               ],
             ),
-            const SizedBox(
-              height: 20,
-            ),
+           
             SizedBox(
-              height: 60,
-              width: 300,
+              height: 40,
+              width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
                   signUpUser();
@@ -333,12 +307,12 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                 ),
                 child: const Text(
                   'Register',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255)),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
                 ),
               ),
             ),
             const SizedBox(
-              height: 20,
+              height: 24,
             ),
           ],
         ),
@@ -369,10 +343,11 @@ Future _displayBottomSheet(BuildContext context) {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
       ),
-      builder: (context) => const SizedBox(
+      builder: (context) => Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             height: 400,
             width: 400,
-            child: Column(
+            child: const Column(
               children: [
                 SizedBox(
                   height: 40,
@@ -380,7 +355,7 @@ Future _displayBottomSheet(BuildContext context) {
                 Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    '    Terms and Conditions',
+                    'Terms and Conditions',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -391,7 +366,7 @@ Future _displayBottomSheet(BuildContext context) {
                   height: 25,
                 ),
                 Text(
-                  'These terms and conditions outline the rules and \nregulations for the use of ParkDirect\'s Website, \nlocated at ParkDirect.',
+                  'These terms and conditions outline the rules and regulations for the use of ParkDirect\'s Website, located at ParkDirect.',
                   style: TextStyle(
                     fontSize: 15,
                   ),
@@ -400,7 +375,7 @@ Future _displayBottomSheet(BuildContext context) {
                   height: 25,
                 ),
                 Text(
-                  '     By accessing this website we assume you accept \n     these terms and conditions. Do not continue to use \n     ParkDirect if you do not agree to take all of the terms \n     and conditions stated on this page.',
+                  'By accessing this website we assume you accept \nthese terms and conditions. Do not continue to use ParkDirect if you do not agree to take all of the terms and conditions stated on this page.',
                   style: TextStyle(
                     fontSize: 15,
                   ),
@@ -409,7 +384,7 @@ Future _displayBottomSheet(BuildContext context) {
                   height: 20,
                 ),
                 Text(
-                  '     All terms refer to the offer, acceptance and \n     consideration of payment necessary to undertake the \n     process of our assistance.',
+                  'All terms refer to the offer, acceptance and consideration of payment necessary to undertake the process of our assistance.',
                   style: TextStyle(
                     fontSize: 15,
                   ),
