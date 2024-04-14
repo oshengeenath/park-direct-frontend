@@ -58,7 +58,6 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          // Pass the selected booking object to the BookingConfirmationScreen
                           builder: (context) => BookingConfirmationScreen(booking: booking),
                         ),
                       );
@@ -69,8 +68,8 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
                         color: Color.fromARGB(255, 244, 240, 240),
                         border: Border(
                           bottom: BorderSide(
-                            color: Color(0xFFE3E2E2), // Color for the bottom line
-                            width: 1.0, // Thickness of the bottom line
+                            color: Color(0xFFE3E2E2),
+                            width: 1.0,
                           ),
                         ),
                       ),

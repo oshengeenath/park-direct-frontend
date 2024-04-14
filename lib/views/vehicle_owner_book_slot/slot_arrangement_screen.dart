@@ -1,4 +1,5 @@
-// ignore_for_file: use_super_parameters, use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use, use_super_parameters
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'dart:developer' as developer;
+
 import '../../util/app_constants.dart';
 import '../auth/login_screen.dart';
 import 'history_screen.dart';
@@ -14,9 +16,11 @@ import '../profile/profile_screen.dart';
 
 class SlotArrangementScreen extends StatefulWidget {
   const SlotArrangementScreen({super.key});
+
   @override
   State<SlotArrangementScreen> createState() => _SlotArrangementScreenState();
 }
+
 class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _vehicleNumberController = TextEditingController();
@@ -27,8 +31,7 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
   int selectedValue = 0;
   bool isPickerVisible = false;
 
-    bool areFieldsValid() {
-    // Check if any of the fields is empty
+  bool areFieldsValid() {
     return _dateController.text.isNotEmpty && _arrivalTime != '00:00' && _leaveTime != '00:00' && _vehicleNumberController.text.isNotEmpty;
   }
 
@@ -83,25 +86,30 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
       });
     });
   }
+
   Future<void> createBooking() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString("token") ?? ''; // Retrieve the saved token
-    final String userDataString = prefs.getString("userData") ?? '{}'; // Retrieve the user data JSON string
-    final Map<String, dynamic> userData = json.decode(userDataString); // Decode the user data
-    final String userEmail = userData['email'] ?? 'default@example.com'; // Use the email from the decoded user data
+    final String token = prefs.getString("token") ?? '';
+    final String userDataString = prefs.getString("userData") ?? '{}';
+    final Map<String, dynamic> userData = json.decode(userDataString);
+    final String userEmail = userData['email'] ?? 'default@example.com';
+
     String slotDate = _dateController.text;
-    String arrivalTime = _arrivalTime; // Ensure this is formatted correctly for your backend
-    String leaveTime = _leaveTime; // Ensure this is formatted correctly for your backend
+    String arrivalTime = _arrivalTime;
+    String leaveTime = _leaveTime;
     String vehicleNumber = _vehicleNumberController.text;
+
     var uuid = const Uuid();
-    String bookingId = uuid.v4(); // Generate a unique UUID for bookingId
-    Uri url = Uri.parse('${AppConstants.baseUrl}/vehicleOwner/book-slot'); // Update the endpoint URL to the new path
+    String bookingId = uuid.v4();
+
+    Uri url = Uri.parse('${AppConstants.baseUrl}/vehicleOwner/book-slot');
+
     try {
       final response = await http.post(
         url,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token", // Add the Authorization header with the token
+          "Authorization": "Bearer $token",
         },
         body: jsonEncode({
           'bookingId': bookingId,
@@ -115,7 +123,8 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Slot booking successful!!"), backgroundColor: Colors.green, // This makes the SnackBar's background color red
+            content: Text("Slot booking successful!!"),
+            backgroundColor: Colors.green,
           ),
         );
       } else {
@@ -123,14 +132,16 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
         String errorMessage = responseBody['error'] ?? "Failed to book slot. Please try again.";
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(errorMessage), backgroundColor: Colors.red, // This makes the SnackBar's background color red
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
           ),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Error booking slot: $e"), backgroundColor: Colors.red, // This makes the SnackBar's background color red
+          content: Text("Error booking slot: $e"),
+          backgroundColor: Colors.red,
         ),
       );
     }
@@ -279,14 +290,12 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (areFieldsValid()) {
-                        // All fields are filled, proceed with booking
-                        await createBooking();
+                       await createBooking();
                       } else {
-                        // One or more fields are empty, show an error message
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Please fill all the details before confirming."),
-                            backgroundColor: Colors.red, // This makes the SnackBar's background color red
+                            backgroundColor: Colors.red,
                           ),
                         );
                       }
@@ -365,7 +374,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     super.initState();
     getUserData();
   }
-
   getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -424,7 +432,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             title: const Text('profile'),
             onTap: () {
               Navigator.pop(context);
-
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ProfileScreen()));
             },
           ),
@@ -433,7 +440,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               title: const Text('History'),
               onTap: () {
                 Navigator.pop(context);
-
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HistoryScreen()));
               }),
           const ListTile(),
@@ -447,7 +453,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               style: TextStyle(color: Colors.red),
             ),
             onTap: () async {
-              //
               logOut(context);
             },
           ),
@@ -457,18 +462,13 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
 Future<void> logOut(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  // Remove the saved token and user data
-  await prefs.remove('token');
-  await prefs.remove('userData');
-  // Add any other keys you have saved and wish to clear upon logout
-
+ await prefs.remove('token');
+await prefs.remove('userData');
+  
   developer.log("User logged out. Data cleared from SharedPreferences.");
 
-  // Navigate to the login screen
-  // Make sure to replace the navigation with whatever fits your app structure
-  // For example, if you're using named routes, it could look different
-  Navigator.of(context).pushAndRemoveUntil(
-    MaterialPageRoute(builder: (context) => const LoginScreen()),
+ Navigator.of(context).pushAndRemoveUntil(
+    MaterialPageRoute(builder: (context) => const VehicleOwnerLoginScreen()),
     (Route<dynamic> route) => false,
   );
 }

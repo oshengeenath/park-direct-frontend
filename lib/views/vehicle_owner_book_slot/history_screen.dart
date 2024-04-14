@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:park_direct_frontend/util/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
+
+import '/util/app_constants.dart';
+
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
+
   @override
   State<HistoryScreen> createState() => _HistoryScreenState();
 }
@@ -19,14 +22,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
     fetchHistoryData();
     getUserData();
   }
+
   Future<void> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // String? token = prefs.getString("token");
+
     String? userDataJson = prefs.getString("userData");
     Map<String, dynamic>? userData = userDataJson != null ? jsonDecode(userDataJson) : {};
+
     if (userData != null) {
-      // Assuming 'email' is a key in userData map. Adjust if it's nested or named differently.
       String? email = userData['email'];
+
       if (email != null) {
         setState(() {
           userEmail = email;
@@ -39,12 +44,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
       developer.log("No user data found in SharedPreferences.");
     }
   }
+
   Future<void> fetchHistoryData() async {
-    await getUserData(); // Make sure userEmail is fetched before making the API call
+    await getUserData();
     try {
       final response = await http.get(
         Uri.parse('${AppConstants.baseUrl}/vehicleOwner/get-all-bookings/$userEmail'),
-        // Add headers if necessary, for example, for authorization
       );
       if (response.statusCode == 200) {
         developer.log('body: ${response.body}');
@@ -59,7 +64,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     } catch (error) {
       developer.log('Error fetching data: $error');
       setState(() {
-        isLoading = false; // Ensure UI is updated even in case of an error
+        isLoading = false;
       });
     }
   }

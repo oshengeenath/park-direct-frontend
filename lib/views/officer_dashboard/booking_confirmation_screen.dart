@@ -1,23 +1,25 @@
-// ignore_for_file: use_super_parameters
+// ignore_for_file: use_super_parameters, use_build_context_synchronously
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
-import 'package:park_direct_frontend/util/app_constants.dart';
-import 'package:park_direct_frontend/views/officer_dashboard/select_a_slot_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '/util/app_constants.dart';
+import '/views/officer_dashboard/select_a_slot_screen.dart';
 import '../../models/booking_model.dart';
+
 class BookingConfirmationScreen extends StatefulWidget {
-  final Booking booking; // Your Booking object
+  final Booking booking;
+
   const BookingConfirmationScreen({Key? key, required this.booking}) : super(key: key);
+
   @override
   State<BookingConfirmationScreen> createState() => _BookingConfirmationScreenState();
 }
 
 class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
   String? savedSlotId;
-  // bool _isLoading = false;
 
   @override
   void initState() {
@@ -58,10 +60,9 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                   const DataCell(Text('Vehicle Number')),
                   DataCell(Text(widget.booking.vehicleNumber)),
                 ]),
-                // Assuming booking.date exists and you want to display it
                 DataRow(cells: [
                   const DataCell(Text('Date')),
-                  DataCell(Text(widget.booking.date.toString())), // Add your booking date here
+                  DataCell(Text(widget.booking.date.toString())),
                 ]),
                 DataRow(cells: [
                   const DataCell(Text('Arrival Time')),
@@ -136,15 +137,13 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       ),
     );
   }
+
   Future<String?> getSavedSlotId() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('selectedSlotId'); // This returns null if no slot ID was saved
+    return prefs.getString('selectedSlotId');
   }
 
   Future<void> confirmBooking() async {
-    // setState(() {
-    //   _isLoading = true;
-    // });
     final url = Uri.parse('${AppConstants.baseUrl}/officer/confirm-booking-request');
     final response = await http.post(
       url,
@@ -152,33 +151,25 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'bookingId': widget.booking.bookingId, // Assuming `id` is a property of your Booking model
+        'bookingId': widget.booking.bookingId,
         'parkingSlotId': savedSlotId!,
       }),
     );
 
     if (response.statusCode == 200) {
-      // Handle successful response
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Booking confirmed successfully!'),
           backgroundColor: Colors.green,
         ),
       );
-      // Optionally, navigate away or show a success message
     } else {
-      // Handle error
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Failed to confirm booking.'),
           backgroundColor: Colors.red,
         ),
       );
-      // Optionally, show an error message
     }
-
-    // setState(() {
-    //   _isLoading = false;
-    // });
   }
 }

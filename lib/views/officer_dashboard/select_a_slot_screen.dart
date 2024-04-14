@@ -1,22 +1,25 @@
-// ignore_for_file: library_private_types_in_public_api
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:park_direct_frontend/util/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'dart:developer' as developer;
 
-import '../../models/parking_slot_model.dart'; // For decoding the JSON response
+import '../../models/parking_slot_model.dart';
+import '/util/app_constants.dart';
+
 class SelectASlotScreen extends StatefulWidget {
   const SelectASlotScreen({super.key});
   @override
   _SelectASlotScreenState createState() => _SelectASlotScreenState();
 }
+
 class _SelectASlotScreenState extends State<SelectASlotScreen> {
   List<ParkingSlot> parkingSlots = [];
-  bool isLoading = true; // Track loading state
-  String? selectedSlotId; // Track the ID of the currently selected slot
+  bool isLoading = true;
+  String? selectedSlotId;
+
   @override
   void initState() {
     super.initState();
@@ -26,25 +29,27 @@ class _SelectASlotScreenState extends State<SelectASlotScreen> {
     const url = '${AppConstants.baseUrl}/officer/all-parking-slots';
     try {
       final response = await http.get(Uri.parse(url));
-      print('HTTP Response status: ${response.statusCode}'); // Debugging line
+      developer.log('HTTP Response status: ${response.statusCode}');
       final List<dynamic> fetchedSlots = json.decode(response.body);
+
       if (fetchedSlots.isEmpty) {
-        print('No slots were fetched.'); // Debugging line
+        developer.log('No slots were fetched.');
       }
+
       final List<ParkingSlot> loadedSlots = [];
       for (var slot in fetchedSlots) {
         loadedSlots.add(ParkingSlot.fromJson(slot));
-        print('Loaded slot: ${slot['slotId']}'); // Debugging line
+        developer.log('Loaded slot: ${slot['slotId']}');
       }
-
-      // Sort slots by slotId in ascending order
+        
       loadedSlots.sort((a, b) => a.slotId.compareTo(b.slotId));
+
       setState(() {
         parkingSlots = loadedSlots;
         isLoading = false;
       });
     } catch (error) {
-      print('Error fetching slots: $error'); // Debugging line
+      developer.log('Error fetching slots: $error');
       setState(() {
         isLoading = false;
       });
@@ -82,31 +87,19 @@ class _SelectASlotScreenState extends State<SelectASlotScreen> {
           bool isSelected = selectedSlotId == parkingSlot.slotId && !parkingSlot.isBooked;
 
           return GestureDetector(
-            // onTap: !parkingSlot.isBooked
-            //     ? () async {
-            //         final prefs = await SharedPreferences.getInstance();
-            //         await prefs.setString('selectedSlotId', parkingSlot.slotId);
-            //         Navigator.pop(context, parkingSlot.slotId);
-            //       }
-            //     : null,
             onTap: !parkingSlot.isBooked
                 ? () async {
                     final prefs = await SharedPreferences.getInstance();
-                    // Optional: Check if a slot was previously selected
+                
                     final previouslySelectedSlotId = prefs.getString('selectedSlotId');
                     if (previouslySelectedSlotId != null) {
-                      // Here you could inform the user that their previously selected slot is being replaced,
-                      // This could be done via a dialog, toast, snackbar, etc.
-                      print('Replacing previously selected slot $previouslySelectedSlotId with new selection ${parkingSlot.slotId}');
+                     developer.log('Replacing previously selected slot $previouslySelectedSlotId with new selection ${parkingSlot.slotId}');
                     }
-                    // Save the new selection
+
                     await prefs.setString('selectedSlotId', parkingSlot.slotId);
-                    // Optionally, navigate back with the selected slot's ID
-                    // This might be useful if you're selecting a slot through a modal/popup and need to pass the selection back
                     Navigator.pop(context, parkingSlot.slotId);
                   }
                 : null,
-
             child: Container(
               decoration: BoxDecoration(
                 color: isSelected

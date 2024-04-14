@@ -3,16 +3,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
-
 import '../../util/app_constants.dart';
 import 'login_screen.dart';
-
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
-
 class _SignUpScreenState extends State<SignUpScreen> {
   bool isChecked = false;
   bool _obscureText = true;
@@ -23,10 +20,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
   Future<void> signUpUser() async {
     const String apiUrl = '${AppConstants.baseUrl}${AppConstants.registerUser}';
-
     final response = await http.put(
       Uri.parse(apiUrl),
       headers: <String, String>{
@@ -39,20 +34,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'password': _passwordController.text,
       }),
     );
+
     if (response.statusCode == 200) {
-      // Successfully posted data
       developer.log('User sign-up  successfully');
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        MaterialPageRoute(builder: (context) => const VehicleOwnerLoginScreen()),
       );
     } else {
-      // Failed to post data
-      developer
-          .log('Failed to save sign-up user. Error: ${response.statusCode}');
+      developer.log('Failed to save sign-up user. Error: ${response.statusCode}');
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,24 +96,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: _nameController,
                 decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                        30), // Adjust the radius to make it circular
-                    borderSide: const BorderSide(
-                        color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                        30), // Adjust the radius to make it circular
-                    borderSide: const BorderSide(
-                        color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   prefixIcon: const Icon(
                     Icons.person,
                     color: Colors.grey,
                   ),
                   hintText: 'Nimal Bandara',
-                  hintStyle:
-                      const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                 ),
               ),
             ),
@@ -157,24 +144,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
                 decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                        30), // Adjust the radius to make it circular
-                    borderSide: const BorderSide(
-                        color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                        30), // Adjust the radius to make it circular
-                    borderSide: const BorderSide(
-                        color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   prefixIcon: const Icon(
                     Icons.email,
                     color: Colors.grey,
                   ),
                   hintText: 'nimal@domain.abc',
-                  hintStyle:
-                      const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                   errorText: _isValidEmail ? null : 'Invalid email address',
                 ),
               ),
@@ -206,33 +188,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: _mobileController,
                 onChanged: (value) {
                   setState(() {
-                    // Update your _isValid logic here
-                    _isValidMobile =
-                        value.length == 9 && int.tryParse(value) != null;
-                    _isValidMobile =
-                        value.length == 10 && int.tryParse(value) != null;
+                    _isValidMobile = value.length == 9 && int.tryParse(value) != null;
+                    _isValidMobile = value.length == 10 && int.tryParse(value) != null;
                   });
                 },
                 decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                        30), // Adjust the radius to make it circular
-                    borderSide: const BorderSide(
-                        color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                        30), // Adjust the radius to make it circular
-                    borderSide: const BorderSide(
-                        color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   prefixIcon: const Icon(
                     Icons.email,
                     color: Colors.grey,
                   ),
                   hintText: '0756984562',
-                  hintStyle:
-                      const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                   errorText: _isValidMobile ? null : 'Invalid Phone Number',
                 ),
               ),
@@ -270,18 +244,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
                 decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                          30), // Adjust the radius to make it circular
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 226, 223, 223),
-                          width: 2.0),
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                          30), // Adjust the radius to make it circular
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 226, 223, 223),
-                          width: 2.0),
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                     ),
                     prefixIcon: const Icon(
                       Icons.lock,
@@ -290,8 +258,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     suffixIcon: GestureDetector(
                       onTap: () {
                         setState(() {
-                          _obscureText =
-                              !_obscureText; // Toggle text visibility
+                          _obscureText = !_obscureText;
                         });
                       },
                       child: Icon(
@@ -300,10 +267,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     hintText: '................',
-                    hintStyle:
-                        const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
-                    errorText:
-                        isPasswordStrong ? null : 'Use a strong Password'),
+                    hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                    errorText: isPasswordStrong ? null : 'Use a strong Password'),
               ),
             ),
             const SizedBox(
@@ -311,7 +276,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             Row(
               children: [
-                //checkbox
                 const SizedBox(
                   width: 30,
                 ),
@@ -322,7 +286,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     color: Color(0xFFFFC700),
                   ),
                   child: Checkbox(
-                    //boder color
                     side: const BorderSide(color: Color(0xFFFFC700)),
                     activeColor: const Color(0xFFFFC700),
                     value: isChecked,
@@ -363,15 +326,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFFC700),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                 ),
                 child: const Text(
                   'Register',
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 255, 255, 255)),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255)),
                 ),
               ),
             ),
@@ -384,18 +343,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
-
 bool isStrongPassword(String password) {
   final RegExp hasUppercase = RegExp(r'[A-Z]');
   final RegExp hasLowercase = RegExp(r'[a-z]');
   final RegExp hasDigits = RegExp(r'\d');
   final RegExp hasSpecialCharacters = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
-  // Check if the password meets all criteria
-  return hasUppercase.hasMatch(password) &&
-      hasLowercase.hasMatch(password) &&
-      hasDigits.hasMatch(password) &&
-      hasSpecialCharacters.hasMatch(password) &&
-      password.length >= 8; // Password length should be at least 8 characters
+
+return hasUppercase.hasMatch(password) && hasLowercase.hasMatch(password) && hasDigits.hasMatch(password) && hasSpecialCharacters.hasMatch(password) && password.length >= 8;
 }
 
 class EmailValidator {
@@ -406,12 +360,10 @@ class EmailValidator {
     return emailRegex.hasMatch(email);
   }
 }
-
 Future _displayBottomSheet(BuildContext context) {
   return showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
-      //barrierColor: Colors.black,
       isDismissible: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),

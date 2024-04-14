@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:park_direct_frontend/views/vehicle_owner_book_slot/slot_arrangement_screen.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../views/vehicle_owner_book_slot/slot_arrangement_screen.dart';
 import 'views/auth/login_screen.dart';
 import 'views/home_screens/officer_home_screen.dart';
 
@@ -10,7 +11,6 @@ void main() {
 }
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,7 +23,6 @@ class MainApp extends StatelessWidget {
           }
 
           if (snapshot.hasData && snapshot.data!["token"] != null) {
-            // Check user role and navigate accordingly
             String userRole = snapshot.data!["userData"]["userRole"] ?? "";
             if (userRole == "officer") {
               return const OfficerHomeScreen();
@@ -32,14 +31,12 @@ class MainApp extends StatelessWidget {
             }
           }
 
-          // If there's no data, token, or the role doesn't match, go to LoginScreen
-          return const LoginScreen();
+          return const VehicleOwnerLoginScreen();
         },
       ),
     );
   }
 }
-
 Future<Map<String, dynamic>> getTokenAndUser() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString("token");

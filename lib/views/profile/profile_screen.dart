@@ -1,31 +1,30 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 import '../auth/login_screen.dart';
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
-
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
-
 }
-
 class _ProfileScreenState extends State<ProfileScreen> {
   String userEmail = '';
   Map<String, dynamic> profileData = {};
-
   @override
   void initState() {
     super.initState();
     _fetchUserData();
   }
+
   Future<void> _fetchUserData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String userDataString = prefs.getString("userData") ?? '{}'; // Retrieve the user data JSON string
-    final Map<String, dynamic> userData = json.decode(userDataString); // Decode the JSON string
+    final String userDataString = prefs.getString("userData") ?? '{}';
+    final Map<String, dynamic> userData = json.decode(userDataString);
+
     setState(() {
       profileData = userData;
     });
@@ -35,16 +34,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFFFC700),
-       
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(builder: (context) => const SlotArrangementScreen()),
-        //     );
-        //   },
-        // ),
         centerTitle: true,
         title: const Text(
           'Profile',
@@ -172,22 +161,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
-
 Future<void> logOut(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  // Remove the saved token and user data
   await prefs.remove('token');
   await prefs.remove('userData');
-  // Add any other keys you have saved and wish to clear upon logout
 
   developer.log("User logged out. Data cleared from SharedPreferences.");
 
-  // Navigate to the login screen
-  // Make sure to replace the navigation with whatever fits your app structure
-  // For example, if you're using named routes, it could look different
   Navigator.of(context).pushAndRemoveUntil(
-    MaterialPageRoute(builder: (context) => const LoginScreen()),
+    MaterialPageRoute(builder: (context) => const VehicleOwnerLoginScreen()),
     (Route<dynamic> route) => false,
   );
 }

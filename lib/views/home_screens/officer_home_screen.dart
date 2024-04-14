@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:park_direct_frontend/views/officer_dashboard/parking_slots_screen.dart';
-import 'package:park_direct_frontend/views/officer_dashboard/pending_requests_screen.dart';
-import 'package:park_direct_frontend/views/officer_dashboard/today_arrivals_screen.dart';
-import 'package:park_direct_frontend/views/profile/profile_screen.dart';
+import '../officer_dashboard/parking_slots_screen.dart';
+import '../officer_dashboard/pending_requests_screen.dart';
+import '../officer_dashboard/today_arrivals_screen.dart';
 import '../officer_dashboard/confirmed_requests_screen.dart';
+import '../profile/profile_screen.dart';
 
 class OfficerHomeScreen extends StatelessWidget {
   const OfficerHomeScreen({super.key});
@@ -90,10 +90,12 @@ class OfficerHomeScreen extends StatelessWidget {
     );
   }
 }
+
 class ItemCard extends StatelessWidget {
-  final String iconImage; // Path to the icon image
-  final String cardText; // Text to be displayed on the card
-  final VoidCallback onPressed; // Callback function for tap event
+  final String iconImage;
+  final String cardText;
+  final VoidCallback onPressed;
+
   const ItemCard({
     super.key,
     required this.iconImage,
@@ -103,8 +105,7 @@ class ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // Wrapping with GestureDetector to handle taps
-      onTap: onPressed,
+     onTap: onPressed,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -115,23 +116,22 @@ class ItemCard extends StatelessWidget {
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 5,
               blurRadius: 7,
-              offset: const Offset(0, 3), // changes position of shadow
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         width: double.infinity,
         height: 60,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start, // Adjust as needed
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10), // Adjust padding as needed
-              child: Image.asset(iconImage), // Using the iconImage parameter
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Image.asset(iconImage),
             ),
             Expanded(
-              child: Text(cardText, style: const TextStyle(fontSize: 16)), // Using the cardText parameter
+              child: Text(cardText, style: const TextStyle(fontSize: 16)),
             ),
-            // If you want an icon or image at the end, you can uncomment and adjust this:
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Image.asset("assets/officer_home_icons/next_icon.png"),

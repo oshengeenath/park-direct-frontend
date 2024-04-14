@@ -1,31 +1,33 @@
 // ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
+
 import '../../util/app_constants.dart';
 import '../home_screens/officer_home_screen.dart';
 import '../vehicle_owner_book_slot/slot_arrangement_screen.dart';
-import 'forgot_password_screen.dart';
-import 'officer_login_screen.dart';
-import 'register_screen.dart';
+import '/views/auth/login_screen.dart';
 
-class VehicleOwnerLoginScreen extends StatefulWidget {
-  const VehicleOwnerLoginScreen({super.key});
+class OfficerLoginScreen extends StatefulWidget {
+  const OfficerLoginScreen({super.key});
 
   @override
-  State<VehicleOwnerLoginScreen> createState() => _VehicleOwnerLoginScreenState();
+  State<OfficerLoginScreen> createState() => _OfficerLoginScreenState();
 }
 
-class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
+class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   bool _isPasswordVisible = false;
+
   Future<void> loginUser() async {
     try {
       const String apiUrl = '${AppConstants.baseUrl}${AppConstants.loginUser}';
+
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: <String, String>{
@@ -36,6 +38,7 @@ class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
           "password": _passwordController.text,
         }),
       );
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
 
@@ -48,6 +51,7 @@ class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
         } else {
           developer.log('Unknown user type');
         }
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Login Successful!'),
@@ -71,6 +75,7 @@ class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
       );
     }
   }
+
   Future<void> saveUserLocally(Map<String, dynamic> userData, String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -80,6 +85,7 @@ class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
 
     developer.log("User data and token saved to SharedPreferences");
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,7 +103,7 @@ class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
             Container(
               alignment: Alignment.topLeft,
               child: const Text(
-                'Vehicle\nOwner Login',
+                'Officer Login',
                 style: TextStyle(
                   fontSize: 35,
                   fontWeight: FontWeight.bold,
@@ -202,23 +208,6 @@ class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
                 ),
               ],
             ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
-                );
-              },
-              child: const Align(
-                alignment: Alignment.bottomRight,
-                child: Text(
-                  'forgot password? Reset',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
             Column(
               children: [
                 SizedBox(
@@ -241,37 +230,8 @@ class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
                     ),
                   ),
                 ),
-            const SizedBox(
+                const SizedBox(
                   height: 16,
-                ),
-                SizedBox(
-                  height: 40,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                      );
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                          side: const BorderSide(
-                            color: Color(0xFFFFC700),
-                          ),
-                        ),
-                      ),
-                    ),
-                    child: const Text(
-                      'Don’t have an account? Register',
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
                 ),
                 const SizedBox(
                   height: 16,
@@ -283,7 +243,7 @@ class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
                     onPressed: () async {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const OfficerLoginScreen()),
+                        MaterialPageRoute(builder: (context) => const VehicleOwnerLoginScreen()),
                       );
                     },
                     style: ButtonStyle(
@@ -298,7 +258,7 @@ class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
                       ),
                     ),
                     child: const Text(
-                      'Login as an Officer',
+                      'Login as a Vehicle Owner',
                       style: TextStyle(
                         color: Colors.black,
                       ),

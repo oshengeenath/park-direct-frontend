@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:park_direct_frontend/views/auth/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
+
 import '../../util/app_constants.dart';
 import 'verification_code_screen.dart';
+import '/views/auth/login_screen.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
   @override
@@ -60,7 +62,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Container(
               alignment: Alignment.topLeft,
               child: Text(
-                'Register to\nParkDirect Account',
+                'Register as a\nVehicle Owner',
                 style: GoogleFonts.lato(fontSize: 25, color: const Color.fromARGB(255, 0, 0, 0), fontWeight: FontWeight.bold),
               ),
             ),
@@ -108,40 +110,58 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ],
             ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
-              },
-              child: const Align(
-                alignment: Alignment.center,
-                child: Text(
-                  'Already have an account Login',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+            Column(
+              children: [
+                SizedBox(
+                  height: 40,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      registerUser();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFC700),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                    ),
+                    child: Text(
+                      'Register',
+                      style: GoogleFonts.poppins(color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            SizedBox(
-              height: 40,
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  registerUser();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFC700),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+              const SizedBox(
+                  height: 16,
                 ),
-                child: Text(
-                  'Register',
-                  style: GoogleFonts.poppins(color: const Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold),
+               SizedBox(
+                  height: 40,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const VehicleOwnerLoginScreen()),
+                      );
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                          side: const BorderSide(
+                            color: Color(0xFFFFC700),
+                          ),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      'Already have an account? Login',
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ],
         ),

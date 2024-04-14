@@ -4,10 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
-
 import '../../util/app_constants.dart';
 import 'login_screen.dart';
-
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
   @override
@@ -28,11 +26,9 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
       forgotPasswordEmail = prefs.getString('forgotPasswordEmail') ?? '';
     });
   }
-
   Future<void> sendPasswordChangeData() async {
     await getUserData();
     const String apiUrl = '${AppConstants.baseUrl}${AppConstants.forgotPassword}';
-
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{
@@ -44,15 +40,15 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
         "newPassword": _passwordController.text,
       }),
     );
+
     if (response.statusCode == 200) {
-      // Successfully posted data
       developer.log('Password changed successfully');
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),
+        MaterialPageRoute(builder: (context) => const VehicleOwnerLoginScreen()),
       );
     } else {
-      // Failed to post data
       developer.log('Failed to change password. Error: ${response.statusCode}');
     }
   }
@@ -62,7 +58,6 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            //add image
             Container(
               alignment: Alignment.topRight,
               child: Image.asset(
@@ -106,11 +101,11 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                 controller: _tokenController,
                 decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
+                    borderRadius: BorderRadius.circular(30),
                     borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
+                    borderRadius: BorderRadius.circular(30),
                     borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   prefixIcon: const Icon(
@@ -148,11 +143,11 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                 controller: _passwordController,
                 decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
+                    borderRadius: BorderRadius.circular(30),
                     borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30), // Adjust the radius to make it circular
+                    borderRadius: BorderRadius.circular(30),
                     borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
                   ),
                   prefixIcon: const Icon(
@@ -161,7 +156,6 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                   ),
                   hintText: '  *********',
                   hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
-                  //  errorText: _validate ? 'Value cant be empty' : null,
                 ),
               ),
             ),
@@ -174,7 +168,7 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
                   sendPasswordChangeData();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    MaterialPageRoute(builder: (context) => const VehicleOwnerLoginScreen()),
                   );
                 },
                 style: ElevatedButton.styleFrom(

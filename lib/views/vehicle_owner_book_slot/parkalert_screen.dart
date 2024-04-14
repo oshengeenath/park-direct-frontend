@@ -1,28 +1,18 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:park_direct_frontend/views/home_screens/vehicle_owner_home_screen.dart';
-
-import 'login_screen.dart';
-
-class AlertSuccessScreen extends StatefulWidget {
-  const AlertSuccessScreen({super.key});
-
+import 'slot_arrangement_screen.dart';
+class ParkAlertScreen extends StatefulWidget {
+  const ParkAlertScreen({super.key});
   @override
-  State<AlertSuccessScreen> createState() => _AlertSuccessScreenState();
+  State<ParkAlertScreen> createState() => _ParkAlertScreenState();
 }
-
-class _AlertSuccessScreenState extends State<AlertSuccessScreen> {
+class _ParkAlertScreenState extends State<ParkAlertScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(
-        const Duration(seconds: 2),
-        () => Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const VehicleOwnerHomeScreen())));
+    Timer(const Duration(seconds: 2), () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SlotArrangementScreen())));
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,17 +39,14 @@ class _AlertSuccessScreenState extends State<AlertSuccessScreen> {
                   Text(
                     " Success!",
                     textAlign: TextAlign.left,
-                    style: GoogleFonts.poppins(
-                        fontSize: 40,
-                        color: const Color.fromARGB(255, 255, 255, 255),
-                        fontWeight: FontWeight.bold),
+                    style: GoogleFonts.poppins(fontSize: 40, color: const Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    "      Congrats, your account \n has been successfully created",
+                    "      Your Vehicle is  Parked",
                     textAlign: TextAlign.left,
                     style: GoogleFonts.poppins(
-                      fontSize: 16,
+                      fontSize: 12,
                       color: const Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
