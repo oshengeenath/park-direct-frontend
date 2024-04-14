@@ -10,15 +10,15 @@ import 'dart:developer' as developer;
 
 import '../../util/app_constants.dart';
 import '../auth/vehicle_owner_login_screen.dart';
-import 'history_screen.dart';
+import 'booking_history_screen.dart';
 import '../profile/profile_screen.dart';
 
-class SlotArrangementScreen extends StatefulWidget {
-  const SlotArrangementScreen({super.key});
+class CreateABookingScreen extends StatefulWidget {
+  const CreateABookingScreen({super.key});
   @override
-  State<SlotArrangementScreen> createState() => _SlotArrangementScreenState();
+  State<CreateABookingScreen> createState() => _CreateABookingScreenState();
 }
-class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
+class _CreateABookingScreenState extends State<CreateABookingScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _vehicleNumberController = TextEditingController();
   String _arrivalTime = '00:00';
@@ -138,179 +138,171 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            backgroundColor: const Color(0xFFFFC700),
-            title: const Text(
-              'Slot Arrangement',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: const Color(0xFFFFC700),
+        title: const Text(
+          'Create a Booking',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      // drawer: const NavigationDrawer(),
+      body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            GestureDetector(
+              onTap: () => _datePicker(),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 226, 223, 223),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                width: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    const Icon(
+                      Icons.calendar_month_outlined,
+                      color: Color(0xFFFFC700),
+                    ),
+                    const Text('Pick a Date'),
+                    Text(
+                      _dateController.text,
+                      style: const TextStyle(fontSize: 15),
+                    ),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          drawer: const NavigationDrawer(),
-          body: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GestureDetector(
-                  onTap: () => _datePicker(),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 226, 223, 223),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    width: double.infinity,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        const Icon(
-                          Icons.calendar_month_outlined,
-                          color: Color(0xFFFFC700),
-                        ),
-                        const Text('Pick a Date'),
-                        Text(
-                          _dateController.text,
-                          style: const TextStyle(fontSize: 15),
-                        ),
-                        const SizedBox(
-                          width: 16,
-                        ),
-                      ],
-                    ),
-                  ),
+            buildTimePickerWidget(context, "Arrival Time", _arrivalTime, (selectedTime) => _arrivalTime = selectedTime),
+            buildTimePickerWidget(context, "Leave Time", _leaveTime, (selectedTime) => _leaveTime = selectedTime),
+            if (isPickerVisible)
+              Container(
+                height: 100,
+                width: double.infinity,
+                decoration: BoxDecoration(color: const Color.fromARGB(142, 255, 255, 255), borderRadius: BorderRadius.circular(10), boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  )
+                ]),
+                child: CupertinoPicker(
+                  itemExtent: 32,
+                  onSelectedItemChanged: (int index) {
+                    updateSelectedValue(index);
+                  },
+                  children: timeValues.map((time) {
+                    return Center(
+                      child: Text(
+                        time,
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                    );
+                  }).toList(),
                 ),
-                buildTimePickerWidget(context, "Arrival Time", _arrivalTime, (selectedTime) => _arrivalTime = selectedTime),
-                buildTimePickerWidget(context, "Leave Time", _leaveTime, (selectedTime) => _leaveTime = selectedTime),
-                if (isPickerVisible)
-                  Container(
-                    height: 100,
-                    width: double.infinity,
-                    decoration: BoxDecoration(color: const Color.fromARGB(142, 255, 255, 255), borderRadius: BorderRadius.circular(10), boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 6,
-                        offset: Offset(0, 2),
-                      )
-                    ]),
-                    child: CupertinoPicker(
-                      itemExtent: 32,
-                      onSelectedItemChanged: (int index) {
-                        updateSelectedValue(index);
-                      },
-                      children: timeValues.map((time) {
-                        return Center(
-                          child: Text(
-                            time,
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                if (isPickerVisible)
-                  GestureDetector(
-                    onTap: () => togglePickerVisibility(),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      width: double.infinity,
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 6,
-                          offset: Offset(0, 2),
-                        )
-                      ]),
-                      child: const Row(
-                        children: <Widget>[
-                          Icon(Icons.check_circle),
-                          Text('Select'),
-                        ],
-                      ),
-                    ),
-                  ),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 226, 223, 223),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Column(
-                    children: [
-                      const Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          'Vehicle',
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: TextField(
-                          controller: _vehicleNumberController,
-                          decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: Color.fromARGB(255, 170, 168, 168), width: 2.0),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: Color.fromARGB(255, 170, 168, 168), width: 2.0),
-                            ),
-                            hintText: 'ABC123',
-                          ),
-                        ),
-                      ),
+              ),
+            if (isPickerVisible)
+              GestureDetector(
+                onTap: () => togglePickerVisibility(),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  width: double.infinity,
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    )
+                  ]),
+                  child: const Row(
+                    children: <Widget>[
+                      Icon(Icons.check_circle),
+                      Text('Select'),
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 40,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (areFieldsValid()) {
-                        await createBooking();
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Please fill all the details before confirming."),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFFC700),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-                    ),
-                    child: const Text(
-                      'Confirm',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255)),
+              ),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 226, 223, 223),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Column(
+                children: [
+                  const Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Vehicle',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: TextField(
+                      controller: _vehicleNumberController,
+                      decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(color: Color.fromARGB(255, 170, 168, 168), width: 2.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(color: Color.fromARGB(255, 170, 168, 168), width: 2.0),
+                        ),
+                        hintText: 'ABC123',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+            SizedBox(
+              height: 40,
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  if (areFieldsValid()) {
+                    await createBooking();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please fill all the details before confirming."),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFC700),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                ),
+                child: const Text(
+                  'Confirm',
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255)),
+                ),
+              ),
+            ),
+          ],
         ),
-        onWillPop: () async {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SlotArrangementScreen()),
-          );
-          return false;
-        });
+      ),
+    );
   }
   GestureDetector buildTimePickerWidget(BuildContext context, String timeLabel, String timeValue, Function(String) onTimeSelected) {
     return GestureDetector(
@@ -422,7 +414,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             title: const Text('profile'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ProfileScreen()));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MyProfileScreen()));
             },
           ),
           ListTile(
@@ -430,7 +422,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               title: const Text('History'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HistoryScreen()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const BookingHistoryScreen()));
               }),
           const ListTile(),
           ListTile(

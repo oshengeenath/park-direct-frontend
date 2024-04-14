@@ -7,13 +7,14 @@ import '../../models/booking_model.dart';
 
 import '/util/app_constants.dart';
 
-class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({super.key});
+class BookingHistoryScreen extends StatefulWidget {
+  const BookingHistoryScreen({super.key});
 
   @override
-  State<HistoryScreen> createState() => _HistoryScreenState();
+  State<BookingHistoryScreen> createState() => _BookingHistoryScreenState();
 }
-class _HistoryScreenState extends State<HistoryScreen> {
+
+class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
   late Future<List<Booking>> historyData;
   String userEmail = '';
   bool isLoading = true;
@@ -28,7 +29,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String? userDataJson = prefs.getString("userData");
-    Map<String, dynamic>? userData = userDataJson != null ? jsonDecode(userDataJson) : {};
+    Map<String, dynamic>? userData =
+        userDataJson != null ? jsonDecode(userDataJson) : {};
 
     if (userData != null) {
       String? email = userData['email'];
@@ -50,19 +52,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
     await getUserData();
 
     final response = await http.get(
-      Uri.parse('${AppConstants.baseUrl}/vehicleOwner/get-all-bookings/$userEmail'),
+      Uri.parse(
+          '${AppConstants.baseUrl}/vehicleOwner/get-all-bookings/$userEmail'),
     );
     if (response.statusCode == 200) {
       setState(() {
         isLoading = false;
       });
-      
+
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Booking.fromJson(data)).toList();
     } else {
       throw Exception('Failed to load data from API');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,8 +112,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         children: [
                           Container(
                             width: 6, // Width of the color line
-                            height: 80, // Adjust the height according to your ListTile height
-                            color: getStatusColor(booking.status), // Color based on booking status
+                            height:
+                                80, // Adjust the height according to your ListTile height
+                            color: getStatusColor(booking
+                                .status), // Color based on booking status
                           ),
                           Expanded(
                             child: ListTile(
@@ -122,7 +128,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [Text("Date: ${booking.date}"), Text("From ${booking.arrivalTime} to ${booking.leaveTime}")],
+                                children: [
+                                  Text("Date: ${booking.date}"),
+                                  Text(
+                                      "From ${booking.arrivalTime} to ${booking.leaveTime}")
+                                ],
                               ),
                               trailing: Column(
                                 children: [

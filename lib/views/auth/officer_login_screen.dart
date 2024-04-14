@@ -2,12 +2,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:park_direct_frontend/views/home_screens/vehicle_owner_home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 
 import '../../util/app_constants.dart';
 import '../home_screens/officer_home_screen.dart';
-import '../vehicle_owner_book_slot/slot_arrangement_screen.dart';
 import 'vehicle_owner_login_screen.dart';
 
 class OfficerLoginScreen extends StatefulWidget {
@@ -36,7 +36,7 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
         final responseData = json.decode(response.body);
         await saveUserLocally(responseData['user'], responseData['token']);
         if (responseData['user']['userRole'] == 'vehicleOwner') {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SlotArrangementScreen()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const VehicleOwnerHomeScreen()));
         } else if (responseData['user']['userRole'] == 'officer') {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const OfficerHomeScreen()));
         } else {

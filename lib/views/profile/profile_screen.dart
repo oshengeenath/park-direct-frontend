@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 import '../auth/vehicle_owner_login_screen.dart';
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class MyProfileScreen extends StatefulWidget {
+  const MyProfileScreen({super.key});
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<MyProfileScreen> createState() => _MyProfileScreenState();
 }
-class _ProfileScreenState extends State<ProfileScreen> {
+class _MyProfileScreenState extends State<MyProfileScreen> {
   String userEmail = '';
   Map<String, dynamic> profileData = {};
   @override
@@ -55,25 +55,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 alignment: Alignment.topRight,
               ),
             ),
-            Row(
-              children: [
-                Container(
-                  alignment: Alignment.topLeft,
-                  child: Image.asset(
-                    'assets/profile.png',
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(
               height: 16,
             ),
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
-                'Personal Details',
+                'Your Details',
                 style: TextStyle(
-                  fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -148,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: const Text(
                   'Log out',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                 ),
               ),
             ),
