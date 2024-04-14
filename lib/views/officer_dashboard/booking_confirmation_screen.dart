@@ -163,6 +163,10 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
           backgroundColor: Colors.green,
         ),
       );
+
+      // Delete the parking slot ID from SharedPreferences after successful confirmation
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('selectedSlotId');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
