@@ -1,15 +1,17 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'dart:developer' as developer;
 
+import '../../controllers/email_controller.dart';
 import '../../util/app_constants.dart';
 import 'verification_code_screen.dart';
 import 'vehicle_owner_login_screen.dart';
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
   @override
@@ -39,12 +41,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       developer.log('Failed to sent email. Error: ${response.statusCode}');
     }
   }
+
   saveUserEmail() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     String registerEmail = _emailController.text;
-    await prefs.setString("registerEmail", registerEmail);
-    developer.log("Email saved to SharedPreferences: $registerEmail");
+    
+    final emailController = Get.find<EmailController>();
+    emailController.saveEmailAddress(registerEmail);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

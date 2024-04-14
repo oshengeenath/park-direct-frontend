@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../views/vehicle_owner_book_slot/slot_arrangement_screen.dart';
+import 'controllers/email_controller.dart';
 import 'views/auth/vehicle_owner_login_screen.dart';
 import 'views/home_screens/officer_home_screen.dart';
 
 void main() {
+  Get.put(EmailController());
   runApp(const MainApp());
 }
+
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: FutureBuilder<Map<String, dynamic>>(
         future: getTokenAndUser(),

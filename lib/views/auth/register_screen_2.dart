@@ -1,10 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
+
+import '../../controllers/email_controller.dart';
 import '../../util/app_constants.dart';
 import 'vehicle_owner_login_screen.dart';
+
 class RegisterScreen2 extends StatefulWidget {
   const RegisterScreen2({super.key});
   @override
@@ -15,13 +20,15 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
   bool _obscureText = true;
   bool isPasswordStrong = true;
   bool _isValidMobile = true;
-  bool _isValidEmail = true;
+
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
   Future<void> signUpUser() async {
+    String emailAddress = Get.find<EmailController>().emailAddress;
     const String apiUrl = '${AppConstants.baseUrl}${AppConstants.registerUser}';
+
     final response = await http.put(
       Uri.parse(apiUrl),
       headers: <String, String>{
@@ -29,12 +36,11 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
       },
       body: jsonEncode(<String, String>{
         'fullname': _nameController.text,
-        'email': _emailController.text,
+        'email': emailAddress,
         'mobilenum': _mobileController.text,
         'password': _passwordController.text,
       }),
     );
-
     if (response.statusCode == 200) {
       developer.log('User sign-up successfully');
       Navigator.push(
@@ -59,7 +65,6 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                 'assets/background1.png',
               ),
             ),
-            
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
@@ -79,7 +84,6 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                 ),
               ),
             ),
-           
             Container(
               width: double.infinity,
               height: 40,
@@ -103,56 +107,10 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                     color: Colors.grey,
                   ),
                   hintText: 'John Doe',
-                  //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                  
                 ),
               ),
             ),
-           
-            const Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                'Email',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            
-            Container(
-              width: double.infinity,
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 223, 223),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TextField(
-                controller: _emailController,
-                onChanged: (text) {
-                  setState(() {
-                    _isValidEmail = EmailValidator.isValid(text);
-                  });
-                },
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
-                  ),
-                  prefixIcon: const Icon(
-                    Icons.email,
-                    color: Colors.grey,
-                  ),
-                  hintText: 'user@gmail.com',
-                  //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
-                  errorText: _isValidEmail ? null : 'Invalid email address',
-                ),
-              ),
-            ),
-            
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
@@ -163,7 +121,6 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                 ),
               ),
             ),
-            
             Container(
               width: double.infinity,
               height: 40,
@@ -198,7 +155,6 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                 ),
               ),
             ),
-            
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
@@ -209,7 +165,6 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                 ),
               ),
             ),
-            
             Container(
               width: double.infinity,
               height: 40,
@@ -254,10 +209,8 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                     errorText: isPasswordStrong ? null : 'Use a strong Password'),
               ),
             ),
-            
             Row(
               children: [
-                
                 Container(
                   width: 20,
                   height: 20,
@@ -293,7 +246,6 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                 )
               ],
             ),
-           
             SizedBox(
               height: 40,
               width: double.infinity,
