@@ -46,7 +46,7 @@ class VehicleOwnerHomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const BookingHistoryScreen()),
+                  MaterialPageRoute(builder: (context) => const VehicleOwnerBookingHistoryScreen()),
                 );
               },
             ),

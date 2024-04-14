@@ -117,6 +117,10 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
             backgroundColor: Colors.green,
           ),
         );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const VehicleOwnerBookingHistoryScreen()),
+        );
       } else {
         Map<String, dynamic> responseBody = jsonDecode(response.body);
         String errorMessage = responseBody['error'] ?? "Failed to book slot. Please try again.";
@@ -422,7 +426,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               title: const Text('History'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const BookingHistoryScreen()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const VehicleOwnerBookingHistoryScreen()));
               }),
           const ListTile(),
           ListTile(

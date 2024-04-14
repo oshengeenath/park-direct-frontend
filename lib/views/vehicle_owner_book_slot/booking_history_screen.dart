@@ -7,14 +7,14 @@ import '../../models/booking_model.dart';
 
 import '/util/app_constants.dart';
 
-class BookingHistoryScreen extends StatefulWidget {
-  const BookingHistoryScreen({super.key});
+class VehicleOwnerBookingHistoryScreen extends StatefulWidget {
+  const VehicleOwnerBookingHistoryScreen({super.key});
 
   @override
-  State<BookingHistoryScreen> createState() => _BookingHistoryScreenState();
+  State<VehicleOwnerBookingHistoryScreen> createState() => _VehicleOwnerBookingHistoryScreenState();
 }
 
-class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
+class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHistoryScreen> {
   late Future<List<Booking>> historyData;
   String userEmail = '';
   bool isLoading = true;
