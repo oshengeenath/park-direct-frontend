@@ -1,35 +1,27 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
-
 import '../../util/app_constants.dart';
 import '../home_screens/officer_home_screen.dart';
 import '../vehicle_owner_book_slot/slot_arrangement_screen.dart';
 import 'forgot_password_screen.dart';
 import 'officer_login_screen.dart';
 import 'register_screen.dart';
-
 class VehicleOwnerLoginScreen extends StatefulWidget {
   const VehicleOwnerLoginScreen({super.key});
-
   @override
   State<VehicleOwnerLoginScreen> createState() => _VehicleOwnerLoginScreenState();
 }
-
 class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
   bool _isPasswordVisible = false;
-
   Future<void> loginUser() async {
     try {
       const String apiUrl = '${AppConstants.baseUrl}${AppConstants.loginUser}';
-
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: <String, String>{
@@ -40,12 +32,9 @@ class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
           "password": _passwordController.text,
         }),
       );
-
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-
         await saveUserLocally(responseData['user'], responseData['token']);
-
         if (responseData['user']['userRole'] == 'vehicleOwner') {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SlotArrangementScreen()));
         } else if (responseData['user']['userRole'] == 'officer') {
@@ -53,7 +42,6 @@ class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
         } else {
           developer.log('Unknown user type');
         }
-
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Login Successful!'),
@@ -77,17 +65,12 @@ class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
       );
     }
   }
-
   Future<void> saveUserLocally(Map<String, dynamic> userData, String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     await prefs.setString("userData", jsonEncode(userData));
-
     await prefs.setString("token", token);
-
     developer.log("User data and token saved to SharedPreferences");
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -224,12 +207,27 @@ class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
                     MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
                   );
                 },
-                child: const Align(
+                child: Align(
                   alignment: Alignment.bottomRight,
-                  child: Text(
-                    'forgot password? Reset',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                 
+                child: RichText(
+                    text: const TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'forgot password? ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'Reset',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.orange,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
