@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use, use_super_parameters
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,17 +9,15 @@ import 'package:uuid/uuid.dart';
 import 'dart:developer' as developer;
 
 import '../../util/app_constants.dart';
-import '../auth/login_screen.dart';
+import '../auth/vehicle_owner_login_screen.dart';
 import 'history_screen.dart';
 import '../profile/profile_screen.dart';
 
 class SlotArrangementScreen extends StatefulWidget {
   const SlotArrangementScreen({super.key});
-
   @override
   State<SlotArrangementScreen> createState() => _SlotArrangementScreenState();
 }
-
 class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _vehicleNumberController = TextEditingController();
@@ -30,11 +27,9 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
   int dateFieldData = 0;
   int selectedValue = 0;
   bool isPickerVisible = false;
-
   bool areFieldsValid() {
     return _dateController.text.isNotEmpty && _arrivalTime != '00:00' && _leaveTime != '00:00' && _vehicleNumberController.text.isNotEmpty;
   }
-
   void togglePickerVisibility() {
     setState(() {
       isPickerVisible = !isPickerVisible;
@@ -86,24 +81,19 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
       });
     });
   }
-
   Future<void> createBooking() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token") ?? '';
     final String userDataString = prefs.getString("userData") ?? '{}';
     final Map<String, dynamic> userData = json.decode(userDataString);
     final String userEmail = userData['email'] ?? 'default@example.com';
-
     String slotDate = _dateController.text;
     String arrivalTime = _arrivalTime;
     String leaveTime = _leaveTime;
     String vehicleNumber = _vehicleNumberController.text;
-
     var uuid = const Uuid();
     String bookingId = uuid.v4();
-
     Uri url = Uri.parse('${AppConstants.baseUrl}/vehicleOwner/book-slot');
-
     try {
       final response = await http.post(
         url,
@@ -290,7 +280,7 @@ class _SlotArrangementScreenState extends State<SlotArrangementScreen> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (areFieldsValid()) {
-                       await createBooking();
+                        await createBooking();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -461,13 +451,10 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
 }
 Future<void> logOut(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-
- await prefs.remove('token');
-await prefs.remove('userData');
-  
+  await prefs.remove('token');
+  await prefs.remove('userData');
   developer.log("User logged out. Data cleared from SharedPreferences.");
-
- Navigator.of(context).pushAndRemoveUntil(
+  Navigator.of(context).pushAndRemoveUntil(
     MaterialPageRoute(builder: (context) => const VehicleOwnerLoginScreen()),
     (Route<dynamic> route) => false,
   );

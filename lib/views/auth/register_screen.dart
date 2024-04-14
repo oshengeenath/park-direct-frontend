@@ -8,7 +8,7 @@ import 'dart:developer' as developer;
 
 import '../../util/app_constants.dart';
 import 'verification_code_screen.dart';
-import '/views/auth/login_screen.dart';
+import 'vehicle_owner_login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -129,10 +129,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
-              const SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
-               SizedBox(
+                SizedBox(
                   height: 40,
                   width: double.infinity,
                   child: ElevatedButton(

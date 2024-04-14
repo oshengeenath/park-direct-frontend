@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../views/vehicle_owner_book_slot/slot_arrangement_screen.dart';
-import 'views/auth/login_screen.dart';
+import 'views/auth/vehicle_owner_login_screen.dart';
 import 'views/home_screens/officer_home_screen.dart';
 
 void main() {
@@ -21,7 +21,6 @@ class MainApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
           }
-
           if (snapshot.hasData && snapshot.data!["token"] != null) {
             String userRole = snapshot.data!["userData"]["userRole"] ?? "";
             if (userRole == "officer") {
@@ -30,7 +29,6 @@ class MainApp extends StatelessWidget {
               return const SlotArrangementScreen();
             }
           }
-
           return const VehicleOwnerLoginScreen();
         },
       ),

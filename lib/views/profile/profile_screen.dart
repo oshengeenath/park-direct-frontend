@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
-import '../auth/login_screen.dart';
+import '../auth/vehicle_owner_login_screen.dart';
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
   @override

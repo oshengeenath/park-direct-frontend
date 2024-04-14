@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
+
 import '../../util/app_constants.dart';
-import 'login_screen.dart';
+import 'vehicle_owner_login_screen.dart';
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
   @override
@@ -34,7 +36,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'password': _passwordController.text,
       }),
     );
-
     if (response.statusCode == 200) {
       developer.log('User sign-up  successfully');
       Navigator.push(
@@ -348,10 +349,8 @@ bool isStrongPassword(String password) {
   final RegExp hasLowercase = RegExp(r'[a-z]');
   final RegExp hasDigits = RegExp(r'\d');
   final RegExp hasSpecialCharacters = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
-
-return hasUppercase.hasMatch(password) && hasLowercase.hasMatch(password) && hasDigits.hasMatch(password) && hasSpecialCharacters.hasMatch(password) && password.length >= 8;
+  return hasUppercase.hasMatch(password) && hasLowercase.hasMatch(password) && hasDigits.hasMatch(password) && hasSpecialCharacters.hasMatch(password) && password.length >= 8;
 }
-
 class EmailValidator {
   static bool isValid(String email) {
     final RegExp emailRegex = RegExp(

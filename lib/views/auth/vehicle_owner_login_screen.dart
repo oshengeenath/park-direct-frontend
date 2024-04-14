@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -8,20 +9,27 @@ import 'dart:developer' as developer;
 import '../../util/app_constants.dart';
 import '../home_screens/officer_home_screen.dart';
 import '../vehicle_owner_book_slot/slot_arrangement_screen.dart';
-import 'vehicle_owner_login_screen.dart';
+import 'forgot_password_screen.dart';
+import 'officer_login_screen.dart';
+import 'register_screen.dart';
 
-class OfficerLoginScreen extends StatefulWidget {
-  const OfficerLoginScreen({super.key});
+class VehicleOwnerLoginScreen extends StatefulWidget {
+  const VehicleOwnerLoginScreen({super.key});
+
   @override
-  State<OfficerLoginScreen> createState() => _OfficerLoginScreenState();
+  State<VehicleOwnerLoginScreen> createState() => _VehicleOwnerLoginScreenState();
 }
-class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
+
+class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
   bool _isPasswordVisible = false;
+
   Future<void> loginUser() async {
     try {
       const String apiUrl = '${AppConstants.baseUrl}${AppConstants.loginUser}';
+
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: <String, String>{
@@ -32,9 +40,12 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
           "password": _passwordController.text,
         }),
       );
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
+
         await saveUserLocally(responseData['user'], responseData['token']);
+
         if (responseData['user']['userRole'] == 'vehicleOwner') {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SlotArrangementScreen()));
         } else if (responseData['user']['userRole'] == 'officer') {
@@ -42,6 +53,7 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
         } else {
           developer.log('Unknown user type');
         }
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Login Successful!'),
@@ -65,12 +77,17 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
       );
     }
   }
+
   Future<void> saveUserLocally(Map<String, dynamic> userData, String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     await prefs.setString("userData", jsonEncode(userData));
+
     await prefs.setString("token", token);
+
     developer.log("User data and token saved to SharedPreferences");
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,18 +109,16 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
                   'assets/background1.png',
                 ),
               ),
-    
               Container(
                 alignment: Alignment.topLeft,
                 child: const Text(
-                  'Officer Login',
+                  'Vehicle\nOwner Login',
                   style: TextStyle(
                     fontSize: 35,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-
               Column(
                 children: [
                   const Align(
@@ -118,7 +133,6 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
                   const SizedBox(
                     height: 8,
                   ),
-        
                   Container(
                     width: double.infinity,
                     height: 50,
@@ -144,9 +158,8 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
                         hintText: 'user@gmail.com',
                         hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                       ),
-              ),
+                    ),
                   ),
-            
                 ],
               ),
               Column(
@@ -160,11 +173,9 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
                       ),
                     ),
                   ),
-            
                   const SizedBox(
                     height: 8,
                   ),
-            
                   Container(
                     width: double.infinity,
                     height: 50,
@@ -188,7 +199,6 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
                           Icons.lock,
                           color: Colors.grey,
                         ),
-                    
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
@@ -203,10 +213,26 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
                         hintText: '********',
                         hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                       ),
+                    ),
                   ),
-                  ),
-            
                 ],
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
+                  );
+                },
+                child: const Align(
+                  alignment: Alignment.bottomRight,
+                  child: Text(
+                    'forgot password? Reset',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
               Column(
                 children: [
@@ -230,10 +256,6 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
                       ),
                     ),
                   ),
-            
-                  const SizedBox(
-                    height: 16,
-                  ),
                   const SizedBox(
                     height: 16,
                   ),
@@ -244,7 +266,7 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
                       onPressed: () async {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const VehicleOwnerLoginScreen()),
+                          MaterialPageRoute(builder: (context) => const RegisterScreen()),
                         );
                       },
                       style: ButtonStyle(
@@ -258,16 +280,46 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
                           ),
                         ),
                       ),
-                
                       child: const Text(
-                        'Login as a Vehicle Owner',
+                        'Don’t have an account? Register',
                         style: TextStyle(
                           color: Colors.black,
                         ),
                       ),
                     ),
                   ),
-            
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  SizedBox(
+                    height: 40,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const OfficerLoginScreen()),
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: const BorderSide(
+                              color: Color(0xFFFFC700),
+                            ),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        'Login as an Officer',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(
@@ -277,7 +329,6 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
           ),
         ),
       ),
-    );
     ));
   }
 }

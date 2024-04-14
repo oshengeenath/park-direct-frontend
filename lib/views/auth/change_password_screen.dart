@@ -4,8 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
+
 import '../../util/app_constants.dart';
-import 'login_screen.dart';
+import 'vehicle_owner_login_screen.dart';
+
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
   @override
@@ -40,12 +42,10 @@ class _ChangePasswordState extends State<ChangePasswordScreen> {
         "newPassword": _passwordController.text,
       }),
     );
-
     if (response.statusCode == 200) {
       developer.log('Password changed successfully');
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
         MaterialPageRoute(builder: (context) => const VehicleOwnerLoginScreen()),
       );
     } else {

@@ -5,9 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
+
 import '../../util/app_constants.dart';
-import 'login_screen.dart';
+import 'vehicle_owner_login_screen.dart';
 import 'sign_up_screen.dart';
+
 class VerificationCodeScreen extends StatefulWidget {
   const VerificationCodeScreen({super.key});
   @override
@@ -41,7 +43,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
         "verificationCode": _verificationCodeController.text,
       }),
     );
-
     if (response.statusCode == 200) {
       developer.log('Verification code successfully');
       Navigator.push(
