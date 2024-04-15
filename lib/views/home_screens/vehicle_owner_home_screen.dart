@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'package:park_direct_frontend/views/vehicle_owner_book_slot/booking_history_screen.dart';
 import 'package:park_direct_frontend/views/vehicle_owner_book_slot/create_a_booking_screen.dart';
-import '../profile/profile_screen.dart';
+import '../common_screens/profile_screen.dart';
 
 class VehicleOwnerHomeScreen extends StatelessWidget {
   const VehicleOwnerHomeScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,19 +69,16 @@ class VehicleOwnerHomeScreen extends StatelessWidget {
     );
   }
 }
-
 class ItemCard extends StatelessWidget {
   final String iconImage;
   final String cardText;
   final VoidCallback onPressed;
-
   const ItemCard({
     super.key,
     required this.iconImage,
     required this.cardText,
     required this.onPressed,
   });
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

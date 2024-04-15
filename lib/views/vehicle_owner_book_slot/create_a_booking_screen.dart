@@ -7,11 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'dart:developer' as developer;
-
 import '../../util/app_constants.dart';
 import '../auth/vehicle_owner_login_screen.dart';
 import 'booking_history_screen.dart';
-import '../profile/profile_screen.dart';
+import '../common_screens/profile_screen.dart';
 
 class CreateABookingScreen extends StatefulWidget {
   const CreateABookingScreen({super.key});
