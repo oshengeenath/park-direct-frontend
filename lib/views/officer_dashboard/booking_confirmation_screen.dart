@@ -1,11 +1,9 @@
 // ignore_for_file: use_build_context_synchronously, use_super_parameters
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:park_direct_frontend/views/home_screens/officer_home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:flutter/material.dart';
 import '/util/app_constants.dart';
 import '/views/officer_dashboard/select_a_slot_screen.dart';
@@ -29,7 +27,6 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       savedSlotId = slotId;
     });
   }
-
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -44,25 +41,8 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
     }
   }
 
-  // Future<void> _selectTime(BuildContext context, bool isArrivalTime) async {
-  //   final TimeOfDay? pickedTime = await showTimePicker(
-  //     context: context,
-  //     initialTime: TimeOfDay.fromDateTime(DateTime.parse(isArrivalTime ? widget.booking.arrivalTime : widget.booking.leaveTime)),
-  //   );
-  //   if (pickedTime != null) {
-  //     setState(() {
-  //       if (isArrivalTime) {
-  //         widget.booking.arrivalTime = pickedTime.format(context);
-  //       } else {
-  //         widget.booking.leaveTime = pickedTime.format(context);
-  //       }
-  //     });
-  //   }
-  // }
 
-  // Updated _selectTime method
   Future<void> _selectTime(BuildContext context, bool isArrivalTime) async {
-    // Convert the arrival/leave time to TimeOfDay for the initialTime parameter
     final initialTime = _timeStringToTimeOfDay(isArrivalTime ? widget.booking.arrivalTime : widget.booking.leaveTime);
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -80,7 +60,6 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
     }
   }
 
-  // Helper method to convert time string to TimeOfDay
   TimeOfDay? _timeStringToTimeOfDay(String? timeString) {
     if (timeString == null) return null;
     final timeParts = timeString.split(':');
@@ -90,7 +69,6 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
     if (hour == null || minute == null) return null;
     return TimeOfDay(hour: hour, minute: minute);
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,7 +99,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ]),
                 DataRow(cells: [
                   const DataCell(Text('Date')),
-                    DataCell(
+                  DataCell(
                     GestureDetector(
                       onTap: () => _selectDate(context),
                       child: Text(widget.booking.date.toString()),
@@ -222,11 +200,15 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
+      body: jsonEncode({
         'bookingId': widget.booking.bookingId,
         'parkingSlotId': savedSlotId!,
+        'date': widget.booking.date,
+        'arrivalTime': widget.booking.arrivalTime,
+        'leaveTime': widget.booking.leaveTime,
       }),
     );
+
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
