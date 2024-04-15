@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,15 +10,20 @@ import '../../controllers/email_controller.dart';
 import '../../util/app_constants.dart';
 import 'verification_code_screen.dart';
 import 'vehicle_owner_login_screen.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
+
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
+
   Future<void> registerUser() async {
     const String apiUrl = '${AppConstants.baseUrl}${AppConstants.sendVerificationEmail}';
+
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{
@@ -30,6 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "email": _emailController.text,
       }),
     );
+
     if (response.statusCode == 201) {
       developer.log('Email sent successfully');
       saveUserEmail();
@@ -44,7 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   saveUserEmail() async {
     String registerEmail = _emailController.text;
-    
+
     final emailController = Get.find<EmailController>();
     emailController.saveEmailAddress(registerEmail);
   }
@@ -89,7 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 226, 223, 223),
+                    color: const Color(0xFFF3F6FF),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: TextField(
@@ -97,11 +101,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: InputDecoration(
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
                       ),
                       prefixIcon: const Icon(
                         Icons.phone_android_rounded,
@@ -129,7 +133,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     child: Text(
                       'Register',
-                      style: GoogleFonts.poppins(color: Colors.black, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.poppins(color: Colors.black,),
                     ),
                   ),
                 ),

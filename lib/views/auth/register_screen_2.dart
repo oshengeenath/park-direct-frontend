@@ -12,9 +12,11 @@ import 'vehicle_owner_login_screen.dart';
 
 class RegisterScreen2 extends StatefulWidget {
   const RegisterScreen2({super.key});
+
   @override
   State<RegisterScreen2> createState() => _RegisterScreen2State();
 }
+
 class _RegisterScreen2State extends State<RegisterScreen2> {
   bool isChecked = false;
   bool _obscureText = true;
@@ -41,6 +43,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
         'password': _passwordController.text,
       }),
     );
+
     if (response.statusCode == 200) {
       developer.log('User sign-up successfully');
       Navigator.push(
@@ -51,234 +54,246 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
       developer.log('Failed to save sign-up user. Error: ${response.statusCode}');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Container(
-              alignment: Alignment.topRight,
-              child: Image.asset(
-                'assets/background1.png',
-              ),
-            ),
-            const Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                'Please complete your profile to create ParkDirect account',
-                style: TextStyle(
-                  fontSize: 15,
-                ),
-              ),
-            ),
-            const Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                'Your Name',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 223, 223),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
-                  ),
-                  prefixIcon: const Icon(
-                    Icons.person,
-                    color: Colors.grey,
-                  ),
-                  hintText: 'John Doe',
-                  
-                ),
-              ),
-            ),
-            const Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                'Mobile Number',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 223, 223),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TextField(
-                controller: _mobileController,
-                onChanged: (value) {
-                  setState(() {
-                    _isValidMobile = value.length == 9 && int.tryParse(value) != null;
-                    _isValidMobile = value.length == 10 && int.tryParse(value) != null;
-                  });
-                },
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
-                  ),
-                  prefixIcon: const Icon(
-                    Icons.email,
-                    color: Colors.grey,
-                  ),
-                  hintText: '077XXXXXXX',
-                  //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
-                  errorText: _isValidMobile ? null : 'Invalid Phone Number',
-                ),
-              ),
-            ),
-            const Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                'Password',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 223, 223),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TextField(
-                controller: _passwordController,
-                obscureText: _obscureText,
-                onChanged: (text) {
-                  setState(() {
-                    isPasswordStrong = isStrongPassword(text);
-                  });
-                },
-                decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 2.0),
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.lock,
-                      color: Colors.grey,
-                    ),
-                    suffixIcon: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
-                      child: Icon(
-                        _obscureText ? Icons.visibility : Icons.visibility_off,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    hintText: '................',
-                    //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
-                    errorText: isPasswordStrong ? null : 'Use a strong Password'),
-              ),
-            ),
-            Row(
+      body: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: MediaQuery.of(context).size.width,
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
-                  width: 20,
-                  height: 20,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFFC700),
+                  alignment: Alignment.topRight,
+                  child: Image.asset(
+                    'assets/background1.png',
                   ),
-                  child: Checkbox(
-                    side: const BorderSide(color: Color(0xFFFFC700)),
-                    activeColor: const Color(0xFFFFC700),
-                    value: isChecked,
-                    onChanged: (newValue) {
+                ),
+                const Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Please complete your profile to create ParkDirect account',
+                    style: TextStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                const Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Your Name',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3F6FF),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.person,
+                        color: Colors.grey,
+                      ),
+                      hintText: 'John Doe',
+                    ),
+                  ),
+                ),
+                const Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Mobile Number',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3F6FF),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: TextField(
+                    controller: _mobileController,
+                    onChanged: (value) {
                       setState(() {
-                        isChecked = newValue!;
+                        _isValidMobile = value.length == 9 && int.tryParse(value) != null;
+                        _isValidMobile = value.length == 10 && int.tryParse(value) != null;
                       });
                     },
-                    checkColor: Colors.white,
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.email,
+                        color: Colors.grey,
+                      ),
+                      hintText: '077XXXXXXX',
+                      //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                      errorText: _isValidMobile ? null : 'Invalid Phone Number',
+                    ),
+                  ),
+                ),
+                const Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Password',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3F6FF),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: TextField(
+                    controller: _passwordController,
+                    obscureText: _obscureText,
+                    onChanged: (text) {
+                      setState(() {
+                        isPasswordStrong = isStrongPassword(text);
+                      });
+                    },
+                    decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.lock,
+                          color: Colors.grey,
+                        ),
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _obscureText = !_obscureText;
+                            });
+                          },
+                          child: Icon(
+                            _obscureText ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        hintText: '********',
+                        //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                        errorText: isPasswordStrong ? null : 'Use a strong Password'),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: 20,
+                      height: 20,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFFFC700),
+                      ),
+                      child: Checkbox(
+                        side: const BorderSide(color: Color(0xFFFFC700)),
+                        activeColor: const Color(0xFFFFC700),
+                        value: isChecked,
+                        onChanged: (newValue) {
+                          setState(() {
+                            isChecked = newValue!;
+                          });
+                        },
+                        checkColor: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    const Text('I agree to '),
+                    GestureDetector(
+                      onTap: () {
+                        _displayBottomSheet(context);
+                      },
+                      child: const Text(
+                        'Terms and Conditions',
+                        style: TextStyle(
+                          color: Color(0xFFFFC700),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 40,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      signUpUser();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFC700),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                    ),
+                    child: const Text(
+                      'Register',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
                 ),
                 const SizedBox(
-                  width: 8,
+                  height: 24,
                 ),
-                const Text('I agree to '),
-                GestureDetector(
-                  onTap: () {
-                    _displayBottomSheet(context);
-                  },
-                  child: const Text(
-                    'Terms and Conditions',
-                    style: TextStyle(
-                      color: Color(0xFFFFC700),
-                    ),
-                  ),
-                )
               ],
             ),
-            SizedBox(
-              height: 40,
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  signUpUser();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFC700),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-                ),
-                child: const Text(
-                  'Register',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
+
 bool isStrongPassword(String password) {
   final RegExp hasUppercase = RegExp(r'[A-Z]');
   final RegExp hasLowercase = RegExp(r'[a-z]');
   final RegExp hasDigits = RegExp(r'\d');
   final RegExp hasSpecialCharacters = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
+
   return hasUppercase.hasMatch(password) && hasLowercase.hasMatch(password) && hasDigits.hasMatch(password) && hasSpecialCharacters.hasMatch(password) && password.length >= 8;
 }
+
 class EmailValidator {
   static bool isValid(String email) {
     final RegExp emailRegex = RegExp(
@@ -287,6 +302,7 @@ class EmailValidator {
     return emailRegex.hasMatch(email);
   }
 }
+
 Future _displayBottomSheet(BuildContext context) {
   return showModalBottomSheet(
       context: context,
