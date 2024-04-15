@@ -46,6 +46,17 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+            // Checking if the snapshot has data and that data is an empty list
+            return const Center(
+              child: Text(
+                'No pending requests.',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
           } else {
             return Scrollbar(
               thumbVisibility: true,

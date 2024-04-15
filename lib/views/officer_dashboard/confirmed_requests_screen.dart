@@ -44,6 +44,17 @@ class _ConfirmedRequestsScreenState extends State<ConfirmedRequestsScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+            // Checking if the snapshot has data and that data is an empty list
+            return const Center(
+              child: Text(
+                'No confirmed bookings.',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
           } else {
             return Scrollbar(
               thumbVisibility: true,
@@ -51,19 +62,68 @@ class _ConfirmedRequestsScreenState extends State<ConfirmedRequestsScreen> {
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   final booking = snapshot.data![index];
-                  return Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 244, 240, 240),
-                      border: Border(
-                        bottom: BorderSide(
-                        color: Color(0xFFE3E2E2),
-                        width: 1.0,
+                  return GestureDetector(
+                    onTap: () {
+                      // Your onTap functionality
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Color(0xFFE3E2E2),
+                            width: 1.0,
+                          ),
                         ),
                       ),
-                    ),
-                    child: ListTile(
-                      title: Text("The vehicle '${booking.vehicleNumber}' is requesting a location."),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 6, // Width of the color line
+                            height: 80, // Adjust the height according to your ListTile height
+                            color: Colors.yellow, // Color based on booking status
+                          ),
+                          Expanded(
+                            child: ListTile(
+                              title: Text(
+                                booking.vehicleNumber,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [Text("Date: ${booking.date}"), Text("From ${booking.arrivalTime} to ${booking.leaveTime}")],
+                              ),
+                              trailing: Column(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.yellow,
+                                    ),
+                                    child: Text(
+                                      booking.status,
+                                      style: const TextStyle(
+                                        color: Color(0xFF192342),
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  const Text(
+                                    "booking status",
+                                    style: TextStyle(
+                                      color: Color(0xFF192342),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
