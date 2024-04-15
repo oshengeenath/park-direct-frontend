@@ -1,22 +1,29 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
 import '../../models/booking_model.dart';
 import '../../util/app_constants.dart';
+
 class ConfirmedRequestsScreen extends StatefulWidget {
   const ConfirmedRequestsScreen({super.key});
+
   @override
   State<ConfirmedRequestsScreen> createState() => _ConfirmedRequestsScreenState();
 }
+
 class _ConfirmedRequestsScreenState extends State<ConfirmedRequestsScreen> {
   late Future<List<Booking>> pendingRequests;
+
   @override
   void initState() {
     super.initState();
     pendingRequests = fetchConfirmedRequests();
   }
+
   Future<List<Booking>> fetchConfirmedRequests() async {
     final response = await http.get(Uri.parse(AppConstants.baseUrl + AppConstants.officerFetchAllConfirmedBookings));
+
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Booking.fromJson(data)).toList();
@@ -24,6 +31,7 @@ class _ConfirmedRequestsScreenState extends State<ConfirmedRequestsScreen> {
       throw Exception('Failed to load confirmed bookings');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +59,6 @@ class _ConfirmedRequestsScreenState extends State<ConfirmedRequestsScreen> {
                 'No confirmed bookings.',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             );

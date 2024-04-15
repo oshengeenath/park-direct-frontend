@@ -1,24 +1,32 @@
 // ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:park_direct_frontend/util/app_constants.dart';
+
 import '../../models/booking_model.dart';
 import 'booking_confirmation_Screen.dart';
+
 class PendingRequestsScreen extends StatefulWidget {
   const PendingRequestsScreen({super.key});
+
   @override
   _PendingRequestsScreenState createState() => _PendingRequestsScreenState();
 }
+
 class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
   late Future<List<Booking>> pendingRequests;
+
   @override
   void initState() {
     super.initState();
     pendingRequests = fetchPendingRequests();
   }
+
   Future<List<Booking>> fetchPendingRequests() async {
     final response = await http.get(Uri.parse(AppConstants.baseUrl + AppConstants.officerFetchAllPendingBookings));
+
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Booking.fromJson(data)).toList();
@@ -26,6 +34,7 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
       throw Exception('Failed to load pending requests');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +62,6 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
                 'No pending requests.',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             );
