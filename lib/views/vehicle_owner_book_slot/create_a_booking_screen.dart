@@ -11,7 +11,6 @@ import '../../util/app_constants.dart';
 import '../auth/vehicle_owner_login_screen.dart';
 import 'booking_history_screen.dart';
 import '../common_screens/profile_screen.dart';
-
 class CreateABookingScreen extends StatefulWidget {
   const CreateABookingScreen({super.key});
   @override
@@ -70,13 +69,21 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
     '22:00',
     '23:00',
   ];
+
   void _datePicker() {
-    showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 7))).then((pickedDate) {
+    showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2000), // Adjust if needed
+            lastDate: DateTime.now().add(const Duration(days: 365)) // Adjust if needed
+            )
+        .then((pickedDate) {
       if (pickedDate == null) {
         return;
       }
       setState(() {
-        _dateController.text = DateFormat.yMd().format(pickedDate);
+        // Here, the format is set to 'yyyy-MM-dd' to match your requirement
+        _dateController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
       });
     });
   }
