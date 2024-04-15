@@ -250,7 +250,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                       child: const Text(
                         'Terms and Conditions',
                         style: TextStyle(
-                          color: Color(0xFFFFC700),
+                          color: Colors.orange,
                         ),
                       ),
                     )

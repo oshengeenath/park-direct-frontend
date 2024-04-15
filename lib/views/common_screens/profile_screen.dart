@@ -5,15 +5,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
+
 import '../auth/vehicle_owner_login_screen.dart';
+
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({super.key});
+
   @override
   State<MyProfileScreen> createState() => _MyProfileScreenState();
 }
+
 class _MyProfileScreenState extends State<MyProfileScreen> {
   String userEmail = '';
   Map<String, dynamic> profileData = {};
+
   @override
   void initState() {
     super.initState();
@@ -29,6 +34,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       profileData = userData;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +76,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 223, 223),
+                color: const Color(0xFFF3F6FF),
                 borderRadius: BorderRadius.circular(30),
               ),
               child: TextField(
@@ -88,7 +94,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 223, 223),
+                color: const Color(0xFFF3F6FF),
                 borderRadius: BorderRadius.circular(30),
               ),
               child: TextField(
@@ -106,7 +112,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 223, 223),
+                color: const Color(0xFFF3F6FF),
                 borderRadius: BorderRadius.circular(30),
               ),
               child: TextField(
@@ -150,6 +156,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     );
   }
 }
+
 Future<void> logOut(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
