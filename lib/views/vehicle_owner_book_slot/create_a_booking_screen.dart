@@ -1,4 +1,5 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use, use_super_parameters
+// ignore_for_file: use_build_context_synchronously, use_super_parameters
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -71,19 +72,13 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
   ];
 
   void _datePicker() {
-    showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime(2000), // Adjust if needed
-            lastDate: DateTime.now().add(const Duration(days: 365)) // Adjust if needed
-            )
-        .then((pickedDate) {
+   
+    showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2000), lastDate: DateTime.now().add(const Duration(days: 365))).then((pickedDate) {
       if (pickedDate == null) {
         return;
       }
       setState(() {
-        // Here, the format is set to 'yyyy-MM-dd' to match your requirement
-        _dateController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+       _dateController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
       });
     });
   }
@@ -159,7 +154,6 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
           ),
         ),
       ),
-      // drawer: const NavigationDrawer(),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
@@ -171,8 +165,13 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
                 padding: const EdgeInsets.all(16),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 226, 223, 223),
+                  color: const Color(0xFFF3F6FF),
                   borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: const Color.fromARGB(255, 226, 223, 223),
+                    width: 1.0,
+                    style: BorderStyle.solid,
+                  ),
                 ),
                 width: double.infinity,
                 child: Row(
@@ -246,8 +245,13 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 223, 223),
+                color: const Color(0xFFF3F6FF),
                 borderRadius: BorderRadius.circular(30),
+                border: Border.all(
+                  color: const Color.fromARGB(255, 226, 223, 223),
+                  width: 1.0,
+                  style: BorderStyle.solid,
+                ),
               ),
               child: Column(
                 children: [
@@ -270,11 +274,11 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(color: Color.fromARGB(255, 170, 168, 168), width: 2.0),
+                          borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(color: Color.fromARGB(255, 170, 168, 168), width: 2.0),
+                          borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
                         ),
                         hintText: 'ABC123',
                       ),
@@ -305,7 +309,7 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
                 ),
                 child: const Text(
                   'Confirm',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255)),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
                 ),
               ),
             ),
@@ -331,8 +335,13 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
       child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 226, 223, 223),
+            color: const Color(0xFFF3F6FF),
             borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: const Color.fromARGB(255, 226, 223, 223),
+              width: 1.0,
+              style: BorderStyle.solid,
+            ),
           ),
           padding: const EdgeInsets.all(16),
           width: double.infinity,

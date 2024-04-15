@@ -1,196 +1,175 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:park_direct_frontend/views/home_screens/vehicle_owner_home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
-
-import '../../controllers/email_controller.dart';
 import '../../util/app_constants.dart';
-import 'vehicle_owner_login_screen.dart';
-
-class RegisterScreen2 extends StatefulWidget {
-  const RegisterScreen2({super.key});
-
+import '../home_screens/officer_home_screen.dart';
+import 'forgot_password_screen.dart';
+import 'officer_login_screen.dart';
+import 'register_screen.dart';
+class VehicleOwnerLoginScreen extends StatefulWidget {
+  const VehicleOwnerLoginScreen({super.key});
   @override
-  State<RegisterScreen2> createState() => _RegisterScreen2State();
+  State<VehicleOwnerLoginScreen> createState() => _VehicleOwnerLoginScreenState();
 }
-
-class _RegisterScreen2State extends State<RegisterScreen2> {
-  bool isChecked = false;
-  bool _obscureText = true;
-  bool isPasswordStrong = true;
-  bool _isValidMobile = true;
-
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _mobileController = TextEditingController();
+class _VehicleOwnerLoginScreenState extends State<VehicleOwnerLoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  Future<void> signUpUser() async {
-    String emailAddress = Get.find<EmailController>().emailAddress;
-    const String apiUrl = '${AppConstants.baseUrl}${AppConstants.registerUser}';
-
-    final response = await http.put(
-      Uri.parse(apiUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'fullname': _nameController.text,
-        'email': emailAddress,
-        'mobilenum': _mobileController.text,
-        'password': _passwordController.text,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      developer.log('User sign-up successfully');
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const VehicleOwnerLoginScreen()),
+  bool _isPasswordVisible = false;
+  Future<void> loginUser() async {
+    try {
+      const String apiUrl = '${AppConstants.baseUrl}${AppConstants.loginUser}';
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          "email": _emailController.text,
+          "password": _passwordController.text,
+        }),
       );
-    } else {
-      developer.log('Failed to save sign-up user. Error: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        await saveUserLocally(responseData['user'], responseData['token']);
+        if (responseData['user']['userRole'] == 'vehicleOwner') {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const VehicleOwnerHomeScreen()));
+        } else if (responseData['user']['userRole'] == 'officer') {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const OfficerHomeScreen()));
+        } else {
+          developer.log('Unknown user type');
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login Successful!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Email address or password is incorrect'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Network Error: Please try again later.'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
-
+  Future<void> saveUserLocally(Map<String, dynamic> userData, String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("userData", jsonEncode(userData));
+    await prefs.setString("token", token);
+    developer.log("User data and token saved to SharedPreferences");
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minWidth: MediaQuery.of(context).size.width,
-            minHeight: MediaQuery.of(context).size.height,
-          ),
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  alignment: Alignment.topRight,
-                  child: Image.asset(
-                    'assets/background1.png',
+        body: SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: MediaQuery.of(context).size.width,
+          minHeight: MediaQuery.of(context).size.height,
+        ),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Container(
+                alignment: Alignment.topRight,
+                child: Image.asset(
+                  'assets/background1.png',
+                ),
+              ),
+              Container(
+                alignment: Alignment.topLeft,
+                child: const Text(
+                  'Vehicle\nOwner Login',
+                  style: TextStyle(
+                    fontSize: 35,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'Please complete your profile to create ParkDirect account',
-                    style: TextStyle(
-                      fontSize: 15,
+              ),
+              Column(
+                children: [
+                  const Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Email Address',
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                ),
-                const Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'Your Name',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF3F6FF),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.phone_android_rounded,
+                          color: Colors.grey,
+                        ),
+                        hintText: 'user@gmail.com',
+                        hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  width: double.infinity,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF3F6FF),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
+                ],
+              ),
+              Column(
+                children: [
+                  const Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Password',
+                      style: TextStyle(
+                        fontSize: 12,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
-                      ),
-                      prefixIcon: const Icon(
-                        Icons.person,
-                        color: Colors.grey,
-                      ),
-                      hintText: 'John Doe',
                     ),
                   ),
-                ),
-                const Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'Mobile Number',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF3F6FF),
+                      borderRadius: BorderRadius.circular(30),
                     ),
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF3F6FF),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: TextField(
-                    controller: _mobileController,
-                    onChanged: (value) {
-                      setState(() {
-                        _isValidMobile = value.length == 9 && int.tryParse(value) != null;
-                        _isValidMobile = value.length == 10 && int.tryParse(value) != null;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
-                      ),
-                      prefixIcon: const Icon(
-                        Icons.email,
-                        color: Colors.grey,
-                      ),
-                      hintText: '077XXXXXXX',
-                      //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
-                      errorText: _isValidMobile ? null : 'Invalid Phone Number',
-                    ),
-                  ),
-                ),
-                const Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'Password',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF3F6FF),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: TextField(
-                    controller: _passwordController,
-                    obscureText: _obscureText,
-                    onChanged: (text) {
-                      setState(() {
-                        isPasswordStrong = isStrongPassword(text);
-                      });
-                    },
-                    decoration: InputDecoration(
+                    child: TextField(
+                      controller: _passwordController,
+                      obscureText: !_isPasswordVisible,
+                      decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
@@ -203,161 +182,149 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                           Icons.lock,
                           color: Colors.grey,
                         ),
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _obscureText = !_obscureText;
-                            });
-                          },
-                          child: Icon(
-                            _obscureText ? Icons.visibility : Icons.visibility_off,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                             color: Colors.grey,
                           ),
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
                         ),
                         hintText: '********',
-                        //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
-                        errorText: isPasswordStrong ? null : 'Use a strong Password'),
+                        hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
+                  );
+                },
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: RichText(
+                    text: const TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'forgot password? ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'Reset',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.orange,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                Row(
-                  children: [
-                    Container(
-                      width: 20,
-                      height: 20,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFFC700),
-                      ),
-                      child: Checkbox(
-                        side: const BorderSide(color: Color(0xFFFFC700)),
-                        activeColor: const Color(0xFFFFC700),
-                        value: isChecked,
-                        onChanged: (newValue) {
-                          setState(() {
-                            isChecked = newValue!;
-                          });
-                        },
-                        checkColor: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    const Text('I agree to '),
-                    GestureDetector(
-                      onTap: () {
-                        _displayBottomSheet(context);
+              ),
+              Column(
+                children: [
+                  SizedBox(
+                    height: 40,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        loginUser();
                       },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFFC700),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                      ),
                       child: const Text(
-                        'Terms and Conditions',
+                        'Login',
                         style: TextStyle(
-                          color: Color(0xFFFFC700),
+                          color: Colors.black,
                         ),
                       ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 40,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      signUpUser();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFFC700),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-                    ),
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(color: Colors.black),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-              ],
-            ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  SizedBox(
+                    height: 40,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: const BorderSide(
+                              color: Color(0xFFFFC700),
+                            ),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        'Don’t have an account? Register',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  SizedBox(
+                    height: 40,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const OfficerLoginScreen()),
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: const BorderSide(
+                              color: Color(0xFFFFC700),
+                            ),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        'Login as an Officer',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 24,
+              )
+            ],
           ),
         ),
       ),
-    );
+    ));
   }
-}
-
-bool isStrongPassword(String password) {
-  final RegExp hasUppercase = RegExp(r'[A-Z]');
-  final RegExp hasLowercase = RegExp(r'[a-z]');
-  final RegExp hasDigits = RegExp(r'\d');
-  final RegExp hasSpecialCharacters = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
-
-  return hasUppercase.hasMatch(password) && hasLowercase.hasMatch(password) && hasDigits.hasMatch(password) && hasSpecialCharacters.hasMatch(password) && password.length >= 8;
-}
-
-class EmailValidator {
-  static bool isValid(String email) {
-    final RegExp emailRegex = RegExp(
-      r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$',
-    );
-    return emailRegex.hasMatch(email);
-  }
-}
-
-Future _displayBottomSheet(BuildContext context) {
-  return showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      isDismissible: false,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
-      ),
-      builder: (context) => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            height: 400,
-            width: 400,
-            child: const Column(
-              children: [
-                SizedBox(
-                  height: 40,
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'Terms and Conditions',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                Text(
-                  'These terms and conditions outline the rules and regulations for the use of ParkDirect\'s Website, located at ParkDirect.',
-                  style: TextStyle(
-                    fontSize: 15,
-                  ),
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                Text(
-                  'By accessing this website we assume you accept \nthese terms and conditions. Do not continue to use ParkDirect if you do not agree to take all of the terms and conditions stated on this page.',
-                  style: TextStyle(
-                    fontSize: 15,
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  'All terms refer to the offer, acceptance and consideration of payment necessary to undertake the process of our assistance.',
-                  style: TextStyle(
-                    fontSize: 15,
-                  ),
-                ),
-              ],
-            ),
-          ));
 }

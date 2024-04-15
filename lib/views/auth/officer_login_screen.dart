@@ -1,33 +1,25 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:park_direct_frontend/views/home_screens/vehicle_owner_home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
-
 import '../../util/app_constants.dart';
 import '../home_screens/officer_home_screen.dart';
 import 'vehicle_owner_login_screen.dart';
-
 class OfficerLoginScreen extends StatefulWidget {
   const OfficerLoginScreen({super.key});
-
   @override
   State<OfficerLoginScreen> createState() => _OfficerLoginScreenState();
 }
-
 class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
   bool _isPasswordVisible = false;
-
   Future<void> loginUser() async {
     try {
       const String apiUrl = '${AppConstants.baseUrl}${AppConstants.loginUser}';
-
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: <String, String>{
@@ -38,12 +30,9 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
           "password": _passwordController.text,
         }),
       );
-
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-
         await saveUserLocally(responseData['user'], responseData['token']);
-
         if (responseData['user']['userRole'] == 'vehicleOwner') {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const VehicleOwnerHomeScreen()));
         } else if (responseData['user']['userRole'] == 'officer') {
@@ -51,7 +40,6 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
         } else {
           developer.log('Unknown user type');
         }
-
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Login Successful!'),
@@ -75,17 +63,12 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
       );
     }
   }
-
   Future<void> saveUserLocally(Map<String, dynamic> userData, String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     await prefs.setString("userData", jsonEncode(userData));
-
     await prefs.setString("token", token);
-
     developer.log("User data and token saved to SharedPreferences");
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -231,7 +214,6 @@ class _OfficerLoginScreenState extends State<OfficerLoginScreen> {
                       child: const Text(
                         'Login',
                         style: TextStyle(
-                          // fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),

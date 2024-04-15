@@ -1,10 +1,9 @@
-// ignore_for_file: use_super_parameters, use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, use_super_parameters
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:park_direct_frontend/views/home_screens/officer_home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:flutter/material.dart';
 import '/util/app_constants.dart';
 import '/views/officer_dashboard/select_a_slot_screen.dart';
@@ -156,7 +155,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      // Delete the parking slot ID from SharedPreferences after successful confirmation
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('selectedSlotId');
 

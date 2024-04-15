@@ -4,16 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 import '../../models/booking_model.dart';
-
 import '/util/app_constants.dart';
-
 class VehicleOwnerBookingHistoryScreen extends StatefulWidget {
   const VehicleOwnerBookingHistoryScreen({super.key});
-
   @override
   State<VehicleOwnerBookingHistoryScreen> createState() => _VehicleOwnerBookingHistoryScreenState();
 }
-
 class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHistoryScreen> {
   late Future<List<Booking>> historyData;
   String userEmail = '';
@@ -24,17 +20,12 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
     historyData = fetchHistoryData();
     getUserData();
   }
-
   Future<void> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     String? userDataJson = prefs.getString("userData");
-    Map<String, dynamic>? userData =
-        userDataJson != null ? jsonDecode(userDataJson) : {};
-
+    Map<String, dynamic>? userData = userDataJson != null ? jsonDecode(userDataJson) : {};
     if (userData != null) {
       String? email = userData['email'];
-
       if (email != null) {
         setState(() {
           userEmail = email;
@@ -47,26 +38,21 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
       developer.log("No user data found in SharedPreferences.");
     }
   }
-
   Future<List<Booking>> fetchHistoryData() async {
     await getUserData();
-
     final response = await http.get(
-      Uri.parse(
-          '${AppConstants.baseUrl}/vehicleOwner/get-all-bookings/$userEmail'),
+      Uri.parse('${AppConstants.baseUrl}/vehicleOwner/get-all-bookings/$userEmail'),
     );
     if (response.statusCode == 200) {
       setState(() {
         isLoading = false;
       });
-
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Booking.fromJson(data)).toList();
     } else {
       throw Exception('Failed to load data from API');
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,9 +81,8 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
                 itemBuilder: (context, index) {
                   final booking = snapshot.data![index];
                   return GestureDetector(
-                    onTap: () {
-                      // Your onTap functionality
-                    },
+                   
+                    onTap: () {},
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: const BoxDecoration(
@@ -111,11 +96,9 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
                       child: Row(
                         children: [
                           Container(
-                            width: 6, // Width of the color line
-                            height:
-                                80, // Adjust the height according to your ListTile height
-                            color: getStatusColor(booking
-                                .status), // Color based on booking status
+                            width: 6,
+                            height: 80,
+                            color: getStatusColor(booking.status),
                           ),
                           Expanded(
                             child: ListTile(
@@ -128,11 +111,7 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Date: ${booking.date}"),
-                                  Text(
-                                      "From ${booking.arrivalTime} to ${booking.leaveTime}")
-                                ],
+                                children: [Text("Date: ${booking.date}"), Text("From ${booking.arrivalTime} to ${booking.leaveTime}")],
                               ),
                               trailing: Column(
                                 children: [
@@ -154,7 +133,6 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
                                     "booking status",
                                     style: TextStyle(
                                       color: Color(0xFF192342),
-                                      //fontSize: 14,
                                     ),
                                   ),
                                 ],
@@ -174,7 +152,6 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
     );
   }
 }
-
 Color getStatusColor(String status) {
   switch (status.toLowerCase()) {
     case 'failed':
@@ -184,6 +161,6 @@ Color getStatusColor(String status) {
     case 'pending':
       return Colors.yellow;
     default:
-      return Colors.grey; // Default color if none of the cases match
+      return Colors.grey;
   }
 }

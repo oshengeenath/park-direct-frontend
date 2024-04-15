@@ -1,4 +1,3 @@
-// Updated Booking model to match the provided structure
 class Booking {
   final String id;
   final String bookingId;
@@ -9,7 +8,6 @@ class Booking {
   final String vehicleNumber;
   final String status;
   final String parkingSlotId;
-
   Booking({
     required this.id,
     required this.bookingId,
@@ -21,7 +19,6 @@ class Booking {
     required this.status,
     required this.parkingSlotId,
   });
-
   factory Booking.fromJson(Map<String, dynamic> json) {
     return Booking(
       id: json['_id'],

@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../models/booking_model.dart';
 import '../../util/app_constants.dart';
-
 class TodayArrivalsScreen extends StatefulWidget {
   const TodayArrivalsScreen({super.key});
-  
   @override
   State<TodayArrivalsScreen> createState() => _TodayArrivalsScreenState();
 }
@@ -20,19 +18,15 @@ class _TodayArrivalsScreenState extends State<TodayArrivalsScreen> {
   Future<List<Booking>> fetchTodayArrivals() async {
     final response = await http.get(Uri.parse("${AppConstants.baseUrl}/officer/today-arrivals"));
 
-    // Handling OK response
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Booking.fromJson(data)).toList();
     } else if (response.statusCode == 404) {
-      // Handling Not Found response
       throw Exception('No arrivals found for today (404 Not Found).');
     } else {
-      throw Exception('Failed to load today arrivals');
-      // Handling other errors
+      throw Exception('Failed to load today arrivals (Error: ${response.statusCode}).');
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +48,6 @@ class _TodayArrivalsScreenState extends State<TodayArrivalsScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
           } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-            // Checking if the snapshot has data and that data is an empty list
             return const Center(
               child: Text(
                 'No Today Arrivals.',
@@ -72,9 +65,8 @@ class _TodayArrivalsScreenState extends State<TodayArrivalsScreen> {
                 itemBuilder: (context, index) {
                   final booking = snapshot.data![index];
                   return GestureDetector(
-                    onTap: () {
-                      // Your onTap functionality
-                    },
+                    
+                    onTap: () {},
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: const BoxDecoration(
@@ -88,9 +80,9 @@ class _TodayArrivalsScreenState extends State<TodayArrivalsScreen> {
                       child: Row(
                         children: [
                           Container(
-                            width: 6, // Width of the color line
-                            height: 80, // Adjust the height according to your ListTile height
-                            color: Colors.yellow, // Color based on booking status
+                            width: 6,
+                            height: 80,
+                            color: Colors.yellow,
                           ),
                           Expanded(
                             child: ListTile(

@@ -1,29 +1,24 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-
 import 'dart:developer' as developer;
-
 import '../../controllers/email_controller.dart';
 import '../../util/app_constants.dart';
 import 'verification_code_screen.dart';
 import 'vehicle_owner_login_screen.dart';
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
-
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
-
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
-
   Future<void> registerUser() async {
     const String apiUrl = '${AppConstants.baseUrl}${AppConstants.sendVerificationEmail}';
-
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{
@@ -33,7 +28,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "email": _emailController.text,
       }),
     );
-
     if (response.statusCode == 201) {
       developer.log('Email sent successfully');
       saveUserEmail();
@@ -45,14 +39,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       developer.log('Failed to sent email. Error: ${response.statusCode}');
     }
   }
-
   saveUserEmail() async {
     String registerEmail = _emailController.text;
-
     final emailController = Get.find<EmailController>();
     emailController.saveEmailAddress(registerEmail);
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,7 +124,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     child: Text(
                       'Register',
-                      style: GoogleFonts.poppins(color: Colors.black,),
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ),

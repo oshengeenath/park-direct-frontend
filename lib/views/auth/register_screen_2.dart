@@ -1,36 +1,28 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
-
 import '../../controllers/email_controller.dart';
 import '../../util/app_constants.dart';
 import 'vehicle_owner_login_screen.dart';
-
 class RegisterScreen2 extends StatefulWidget {
   const RegisterScreen2({super.key});
-
   @override
   State<RegisterScreen2> createState() => _RegisterScreen2State();
 }
-
 class _RegisterScreen2State extends State<RegisterScreen2> {
   bool isChecked = false;
   bool _obscureText = true;
   bool isPasswordStrong = true;
   bool _isValidMobile = true;
-
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
   Future<void> signUpUser() async {
     String emailAddress = Get.find<EmailController>().emailAddress;
     const String apiUrl = '${AppConstants.baseUrl}${AppConstants.registerUser}';
-
     final response = await http.put(
       Uri.parse(apiUrl),
       headers: <String, String>{
@@ -43,7 +35,6 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
         'password': _passwordController.text,
       }),
     );
-
     if (response.statusCode == 200) {
       developer.log('User sign-up successfully');
       Navigator.push(
@@ -54,7 +45,6 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
       developer.log('Failed to save sign-up user. Error: ${response.statusCode}');
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,7 +150,6 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                         color: Colors.grey,
                       ),
                       hintText: '077XXXXXXX',
-                      //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                       errorText: _isValidMobile ? null : 'Invalid Phone Number',
                     ),
                   ),
@@ -215,7 +204,6 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                           ),
                         ),
                         hintText: '********',
-                        //hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 89, 89)),
                         errorText: isPasswordStrong ? null : 'Use a strong Password'),
                   ),
                 ),
@@ -284,16 +272,13 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
     );
   }
 }
-
 bool isStrongPassword(String password) {
   final RegExp hasUppercase = RegExp(r'[A-Z]');
   final RegExp hasLowercase = RegExp(r'[a-z]');
   final RegExp hasDigits = RegExp(r'\d');
   final RegExp hasSpecialCharacters = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
-
   return hasUppercase.hasMatch(password) && hasLowercase.hasMatch(password) && hasDigits.hasMatch(password) && hasSpecialCharacters.hasMatch(password) && password.length >= 8;
 }
-
 class EmailValidator {
   static bool isValid(String email) {
     final RegExp emailRegex = RegExp(
@@ -302,7 +287,6 @@ class EmailValidator {
     return emailRegex.hasMatch(email);
   }
 }
-
 Future _displayBottomSheet(BuildContext context) {
   return showModalBottomSheet(
       context: context,
