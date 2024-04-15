@@ -1,34 +1,35 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import '../../models/booking_model.dart';
 import '../../util/app_constants.dart';
 
 class TodayArrivalsScreen extends StatefulWidget {
   const TodayArrivalsScreen({super.key});
-
+  
   @override
   State<TodayArrivalsScreen> createState() => _TodayArrivalsScreenState();
 }
-
 class _TodayArrivalsScreenState extends State<TodayArrivalsScreen> {
   late Future<List<Booking>> pendingRequests;
-
   @override
   void initState() {
     super.initState();
     pendingRequests = fetchTodayArrivals();
   }
-
   Future<List<Booking>> fetchTodayArrivals() async {
     final response = await http.get(Uri.parse("${AppConstants.baseUrl}/officer/today-arrivals"));
 
+    // Handling OK response
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Booking.fromJson(data)).toList();
+    } else if (response.statusCode == 404) {
+      // Handling Not Found response
+      throw Exception('No arrivals found for today (404 Not Found).');
     } else {
       throw Exception('Failed to load today arrivals');
+      // Handling other errors
     }
   }
 
@@ -51,7 +52,7 @@ class _TodayArrivalsScreenState extends State<TodayArrivalsScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text(snapshot.error.toString()));
           } else if (snapshot.hasData && snapshot.data!.isEmpty) {
             // Checking if the snapshot has data and that data is an empty list
             return const Center(
