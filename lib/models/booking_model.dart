@@ -1,8 +1,9 @@
+// Updated Booking model to match the provided structure
 class Booking {
   final String id;
   final String bookingId;
   final String email;
-  final DateTime date;
+  final String date;
   final String arrivalTime;
   final String leaveTime;
   final String vehicleNumber;
@@ -26,7 +27,7 @@ class Booking {
       id: json['_id'],
       bookingId: json['bookingId'],
       email: json['email'],
-      date: DateTime.parse(json['date']),
+      date: json['date'],
       arrivalTime: json['arrivalTime'],
       leaveTime: json['leaveTime'],
       vehicleNumber: json['vehicleNumber'],
