@@ -2,9 +2,9 @@ class Booking {
   final String id;
   final String bookingId;
   final String email;
-  final String date;
-  final String arrivalTime;
-  final String leaveTime;
+  String date;
+  String arrivalTime;
+  String leaveTime;
   final String vehicleNumber;
   final String status;
   final String parkingSlotId;

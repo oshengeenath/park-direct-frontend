@@ -2,8 +2,10 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:park_direct_frontend/views/home_screens/officer_home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:flutter/material.dart';
 import '/util/app_constants.dart';
 import '/views/officer_dashboard/select_a_slot_screen.dart';
@@ -27,6 +29,68 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       savedSlotId = slotId;
     });
   }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.parse(widget.booking.date),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2025),
+    );
+    if (pickedDate != null && pickedDate != DateTime.parse(widget.booking.date)) {
+      setState(() {
+        widget.booking.date = DateFormat('yyyy-MM-dd').format(pickedDate);
+      });
+    }
+  }
+
+  // Future<void> _selectTime(BuildContext context, bool isArrivalTime) async {
+  //   final TimeOfDay? pickedTime = await showTimePicker(
+  //     context: context,
+  //     initialTime: TimeOfDay.fromDateTime(DateTime.parse(isArrivalTime ? widget.booking.arrivalTime : widget.booking.leaveTime)),
+  //   );
+  //   if (pickedTime != null) {
+  //     setState(() {
+  //       if (isArrivalTime) {
+  //         widget.booking.arrivalTime = pickedTime.format(context);
+  //       } else {
+  //         widget.booking.leaveTime = pickedTime.format(context);
+  //       }
+  //     });
+  //   }
+  // }
+
+  // Updated _selectTime method
+  Future<void> _selectTime(BuildContext context, bool isArrivalTime) async {
+    // Convert the arrival/leave time to TimeOfDay for the initialTime parameter
+    final initialTime = _timeStringToTimeOfDay(isArrivalTime ? widget.booking.arrivalTime : widget.booking.leaveTime);
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime ?? TimeOfDay.now(),
+    );
+    if (pickedTime != null) {
+      setState(() {
+        final formattedTime = pickedTime.format(context);
+        if (isArrivalTime) {
+          widget.booking.arrivalTime = formattedTime;
+        } else {
+          widget.booking.leaveTime = formattedTime;
+        }
+      });
+    }
+  }
+
+  // Helper method to convert time string to TimeOfDay
+  TimeOfDay? _timeStringToTimeOfDay(String? timeString) {
+    if (timeString == null) return null;
+    final timeParts = timeString.split(':');
+    if (timeParts.length != 2) return null;
+    final hour = int.tryParse(timeParts[0]);
+    final minute = int.tryParse(timeParts[1].split(' ')[0]);
+    if (hour == null || minute == null) return null;
+    return TimeOfDay(hour: hour, minute: minute);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,15 +121,30 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ]),
                 DataRow(cells: [
                   const DataCell(Text('Date')),
-                  DataCell(Text(widget.booking.date.toString())),
+                    DataCell(
+                    GestureDetector(
+                      onTap: () => _selectDate(context),
+                      child: Text(widget.booking.date.toString()),
+                    ),
+                  ),
                 ]),
                 DataRow(cells: [
                   const DataCell(Text('Arrival Time')),
-                  DataCell(Text(widget.booking.arrivalTime)),
+                  DataCell(
+                    GestureDetector(
+                      onTap: () => _selectTime(context, true),
+                      child: Text(widget.booking.arrivalTime),
+                    ),
+                  ),
                 ]),
                 DataRow(cells: [
                   const DataCell(Text('Leave Time')),
-                  DataCell(Text(widget.booking.leaveTime)),
+                  DataCell(
+                    GestureDetector(
+                      onTap: () => _selectTime(context, false),
+                      child: Text(widget.booking.leaveTime),
+                    ),
+                  ),
                 ]),
                 DataRow(cells: [
                   const DataCell(Text('Parking Slot ID')),
@@ -155,10 +234,8 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
           backgroundColor: Colors.green,
         ),
       );
-
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('selectedSlotId');
-
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const OfficerHomeScreen()),
