@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+
 import '../officer_dashboard/parking_slots_screen.dart';
 import '../officer_dashboard/pending_requests_screen.dart';
 import '../officer_dashboard/today_arrivals_screen.dart';
-import '../officer_dashboard/confirmed_requests_screen.dart';
+import '../officer_dashboard/confirmed_bookings_screen.dart';
 import '../profile/profile_screen.dart';
 
 class OfficerHomeScreen extends StatelessWidget {
   const OfficerHomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,10 +104,11 @@ class ItemCard extends StatelessWidget {
     required this.cardText,
     required this.onPressed,
   });
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-     onTap: onPressed,
+      onTap: onPressed,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
