@@ -69,7 +69,7 @@ class ParkingSlotsNewScreen extends StatelessWidget {
 
   Widget createSlot(String text, BoxDecoration decoration, bool isLast, int colNum) {
     BoxDecoration finalDecoration;
-    if (isLast && (colNum == 1 || colNum == 3)) {
+    if (isLast && (colNum == 1)) {
       finalDecoration = decoration.copyWith(
         border: const Border(
           top: BorderSide(color: Colors.black, width: 2.0),
@@ -77,7 +77,23 @@ class ParkingSlotsNewScreen extends StatelessWidget {
           left: BorderSide(color: Colors.black, width: 2.0),
         ),
       );
-    } else if (isLast && (colNum == 2 || colNum == 4)) {
+    } else if (isLast && (colNum == 3)) {
+      finalDecoration = decoration.copyWith(
+        border: const Border(
+          top: BorderSide(color: Colors.black, width: 2.0),
+          bottom: BorderSide(color: Colors.black, width: 2.0),
+          left: BorderSide(color: Colors.black, width: 1.0),
+        ),
+      );
+    } else if (isLast && (colNum == 2)) {
+      finalDecoration = decoration.copyWith(
+        border: const Border(
+          top: BorderSide(color: Colors.black, width: 2.0),
+          bottom: BorderSide(color: Colors.black, width: 2.0),
+          right: BorderSide(color: Colors.black, width: 1.0),
+        ),
+      );
+    } else if (isLast && (colNum == 4)) {
       finalDecoration = decoration.copyWith(
         border: const Border(
           top: BorderSide(color: Colors.black, width: 2.0),
@@ -91,7 +107,7 @@ class ParkingSlotsNewScreen extends StatelessWidget {
 
     return Container(
       decoration: finalDecoration,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
+      //margin: const EdgeInsets.symmetric(horizontal: 4),
       height: 50,
       width: 50,
       child: Container(
@@ -145,7 +161,7 @@ class ParkingSlotsNewScreen extends StatelessWidget {
         ),
         left: BorderSide(
           color: Colors.black,
-          width: 2.0,
+          width: 1.0,
         ),
       ),
     );
@@ -160,7 +176,7 @@ class ParkingSlotsNewScreen extends StatelessWidget {
         ),
         right: BorderSide(
           color: Colors.black,
-          width: 2.0,
+          width: 1.0,
         ),
       ),
     );
