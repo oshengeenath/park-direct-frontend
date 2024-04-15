@@ -2,25 +2,21 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:park_direct_frontend/views/home_screens/officer_home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
 import '/util/app_constants.dart';
 import '/views/officer_dashboard/select_a_slot_screen.dart';
 import '../../models/booking_model.dart';
-
 class BookingConfirmationScreen extends StatefulWidget {
   final Booking booking;
-
   const BookingConfirmationScreen({Key? key, required this.booking}) : super(key: key);
-
   @override
   State<BookingConfirmationScreen> createState() => _BookingConfirmationScreenState();
 }
-
 class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
   String? savedSlotId;
-
   @override
   void initState() {
     super.initState();
@@ -137,12 +133,10 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       ),
     );
   }
-
   Future<String?> getSavedSlotId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('selectedSlotId');
   }
-
   Future<void> confirmBooking() async {
     final url = Uri.parse('${AppConstants.baseUrl}/officer/confirm-booking-request');
     final response = await http.post(
@@ -155,7 +149,6 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
         'parkingSlotId': savedSlotId!,
       }),
     );
-
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -163,10 +156,14 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
           backgroundColor: Colors.green,
         ),
       );
-
       // Delete the parking slot ID from SharedPreferences after successful confirmation
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('selectedSlotId');
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const OfficerHomeScreen()),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
