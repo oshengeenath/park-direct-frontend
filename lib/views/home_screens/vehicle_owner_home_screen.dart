@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:park_direct_frontend/views/vehicle_owner_book_slot/booking_history_screen.dart';
-import 'package:park_direct_frontend/views/vehicle_owner_book_slot/create_a_booking_screen.dart';
+import 'package:park_direct_frontend/views/vehicle_owner_dashboard/booking_history_screen.dart';
+import 'package:park_direct_frontend/views/vehicle_owner_dashboard/create_a_booking_screen.dart';
 import '../common_screens/profile_screen.dart';
 
 class VehicleOwnerHomeScreen extends StatelessWidget {
