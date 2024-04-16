@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:park_direct_frontend/views/home_screens/vehicle_owner_home_screen.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'controllers/email_controller.dart';
+import 'controllers/parking_slot_controller.dart';
 import 'views/auth/vehicle_owner_login_screen.dart';
 import 'views/home_screens/officer_home_screen.dart';
+import '/views/home_screens/vehicle_owner_home_screen.dart';
 
 void main() {
   Get.put(EmailController());
+  Get.put(ParkingSlotController());
   runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(

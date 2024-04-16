@@ -1,13 +1,16 @@
-// ignore_for_file: use_build_context_synchronously, use_super_parameters
+// ignore_for_file: use_super_parameters, use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:park_direct_frontend/views/home_screens/officer_home_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:park_direct_frontend/views/home_screens/officer_home_screen.dart';
 import '/util/app_constants.dart';
-import '/views/officer_dashboard/select_a_slot_screen.dart';
 import '../../models/booking_model.dart';
+import 'select_a_slot_new_screen.dart';
+
 class BookingConfirmationScreen extends StatefulWidget {
   final Booking booking;
   const BookingConfirmationScreen({Key? key, required this.booking}) : super(key: key);
@@ -40,8 +43,6 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       });
     }
   }
-
-
   Future<void> _selectTime(BuildContext context, bool isArrivalTime) async {
     final initialTime = _timeStringToTimeOfDay(isArrivalTime ? widget.booking.arrivalTime : widget.booking.leaveTime);
     final TimeOfDay? pickedTime = await showTimePicker(
@@ -59,7 +60,6 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       });
     }
   }
-
   TimeOfDay? _timeStringToTimeOfDay(String? timeString) {
     if (timeString == null) return null;
     final timeParts = timeString.split(':');
@@ -131,7 +131,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                       final selectedSlotId = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const SelectASlotScreen(),
+                          builder: (context) => const SelectASlotNewScreen(),
                         ),
                       );
                       if (selectedSlotId != null) {
@@ -208,7 +208,6 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
         'leaveTime': widget.booking.leaveTime,
       }),
     );
-
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
