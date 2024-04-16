@@ -17,7 +17,6 @@ class _TodayArrivalsScreenState extends State<TodayArrivalsScreen> {
   }
   Future<List<Booking>> fetchTodayArrivals() async {
     final response = await http.get(Uri.parse("${AppConstants.baseUrl}/officer/today-arrivals"));
-
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Booking.fromJson(data)).toList();
@@ -53,7 +52,6 @@ class _TodayArrivalsScreenState extends State<TodayArrivalsScreen> {
                 'No Today Arrivals.',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             );
@@ -65,7 +63,6 @@ class _TodayArrivalsScreenState extends State<TodayArrivalsScreen> {
                 itemBuilder: (context, index) {
                   final booking = snapshot.data![index];
                   return GestureDetector(
-                    
                     onTap: () {},
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),

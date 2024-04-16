@@ -1,15 +1,17 @@
 // ignore_for_file: use_super_parameters, use_build_context_synchronously
 
 import 'dart:convert';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:park_direct_frontend/views/officer_dashboard/select_a_slot_new_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:park_direct_frontend/views/home_screens/officer_home_screen.dart';
+import '../../controllers/parking_slot_controller.dart';
 import '/util/app_constants.dart';
 import '../../models/booking_model.dart';
-import 'select_a_slot_new_screen.dart';
 
 class BookingConfirmationScreen extends StatefulWidget {
   final Booking booking;
@@ -17,19 +19,13 @@ class BookingConfirmationScreen extends StatefulWidget {
   @override
   State<BookingConfirmationScreen> createState() => _BookingConfirmationScreenState();
 }
+
 class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
-  String? savedSlotId;
   @override
   void initState() {
     super.initState();
-    _loadSavedSlotId();
   }
-  Future<void> _loadSavedSlotId() async {
-    final slotId = await getSavedSlotId();
-    setState(() {
-      savedSlotId = slotId;
-    });
-  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -69,6 +65,9 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
     if (hour == null || minute == null) return null;
     return TimeOfDay(hour: hour, minute: minute);
   }
+
+  ParkingSlotController parkingSlotController = Get.find<ParkingSlotController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,36 +126,32 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 DataRow(cells: [
                   const DataCell(Text('Parking Slot ID')),
                   DataCell(GestureDetector(
-                    onTap: () async {
-                      final selectedSlotId = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SelectASlotNewScreen(),
-                        ),
-                      );
-                      if (selectedSlotId != null) {
-                        setState(() {
-                          savedSlotId = selectedSlotId.toString();
-                        });
-                      }
-                    },
-                    child: savedSlotId == null
-                        ? Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: const Color(0xFFFFC700),
-                            ),
-                            child: const Text(
-                              'Select a Slot',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                    onTap: () async {},
+                    child: parkingSlotController.selectedParkingSlot == ""
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const SelectASlotNewScreen()),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: const Color(0xFFFFC700),
+                              ),
+                              child: const Text(
+                                'Select a Slot',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           )
-                        : Text(savedSlotId!),
+                        : Text(parkingSlotController.selectedParkingSlot),
                   )),
                 ]),
               ],
@@ -189,10 +184,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       ),
     );
   }
-  Future<String?> getSavedSlotId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('selectedSlotId');
-  }
+
   Future<void> confirmBooking() async {
     final url = Uri.parse('${AppConstants.baseUrl}/officer/confirm-booking-request');
     final response = await http.post(
@@ -202,7 +194,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       },
       body: jsonEncode({
         'bookingId': widget.booking.bookingId,
-        'parkingSlotId': savedSlotId!,
+        'parkingSlotId': parkingSlotController.selectedParkingSlot,
         'date': widget.booking.date,
         'arrivalTime': widget.booking.arrivalTime,
         'leaveTime': widget.booking.leaveTime,
