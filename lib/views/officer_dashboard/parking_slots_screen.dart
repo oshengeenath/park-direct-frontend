@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:developer' as developer;
 
@@ -27,9 +28,17 @@ class _ParkingSlotsScreenState extends State<ParkingSlotsScreen> {
   }
 
   Future<void> fetchParkingSlots() async {
-    const url = '${AppConstants.baseUrl}/officer/all-parking-slots';
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString("token") ?? '';
+    const url = AppConstants.baseUrl + AppConstants.offficerFetchAllParkingSlots;
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
       developer.log('HTTP Response status: ${response.statusCode}');
       final List<dynamic> fetchedSlots = json.decode(response.body);
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/booking_model.dart';
 import '../../util/app_constants.dart';
 class ConfirmedRequestsScreen extends StatefulWidget {
@@ -16,7 +17,16 @@ class _ConfirmedRequestsScreenState extends State<ConfirmedRequestsScreen> {
     pendingRequests = fetchConfirmedRequests();
   }
   Future<List<Booking>> fetchConfirmedRequests() async {
-    final response = await http.get(Uri.parse(AppConstants.baseUrl + AppConstants.officerFetchAllConfirmedBookings));
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString("token") ?? '';
+
+    final response = await http.get(
+      Uri.parse(AppConstants.baseUrl + AppConstants.officerFetchAllConfirmedBookings),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Booking.fromJson(data)).toList();

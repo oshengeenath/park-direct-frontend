@@ -186,11 +186,15 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
   }
 
   Future<void> confirmBooking() async {
-    final url = Uri.parse('${AppConstants.baseUrl}/officer/confirm-booking-request');
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString("token") ?? '';
+
+    final url = Uri.parse(AppConstants.baseUrl + AppConstants.officerConfirmBookingRequest);
     final response = await http.post(
       url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
       },
       body: jsonEncode({
         'bookingId': widget.booking.bookingId,

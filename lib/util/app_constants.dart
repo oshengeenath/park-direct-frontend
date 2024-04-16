@@ -12,4 +12,6 @@ class AppConstants {
   static const String officerFetchAllPendingBookings = "/officer/fetch-all-pending-requests";
   static const String officerFetchAllConfirmedBookings = "/officer/fetch-all-confirmed-bookings";
   static const String officerConfirmBookingRequest = "/officer/confirm-booking-request";
+  static const String offficerFetchAllParkingSlots = "/officer/all-parking-slots";
+  static const String officerTodayArrivals = "/officer/today-arrivals";
 }

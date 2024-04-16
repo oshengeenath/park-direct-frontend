@@ -26,9 +26,17 @@ class _SelectASlotScreenState extends State<SelectASlotScreen> {
     fetchParkingSlots();
   }
   Future<void> fetchParkingSlots() async {
-    const url = '${AppConstants.baseUrl}/officer/all-parking-slots';
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString("token") ?? '';
+    const url = AppConstants.baseUrl + AppConstants.offficerFetchAllParkingSlots;
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
       developer.log('HTTP Response status: ${response.statusCode}');
       final List<dynamic> fetchedSlots = json.decode(response.body);
 

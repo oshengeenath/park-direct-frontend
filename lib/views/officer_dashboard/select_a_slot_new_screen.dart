@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:park_direct_frontend/controllers/parking_slot_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 
 import '../../models/parking_slot_model.dart';
@@ -22,9 +23,17 @@ class _SelectASlotNewScreenState extends State<SelectASlotNewScreen> {
     fetchParkingSlots();
   }
   Future<void> fetchParkingSlots() async {
-    const url = '${AppConstants.baseUrl}/officer/all-parking-slots';
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString("token") ?? '';
+    const url = AppConstants.baseUrl + AppConstants.offficerFetchAllParkingSlots;
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
       developer.log('HTTP Response status: ${response.statusCode}');
       final List<dynamic> fetchedSlots = json.decode(response.body);
       if (fetchedSlots.isEmpty) {

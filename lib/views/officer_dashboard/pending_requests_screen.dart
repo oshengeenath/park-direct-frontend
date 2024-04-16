@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:park_direct_frontend/util/app_constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/booking_model.dart';
 import 'booking_confirmation_Screen.dart';
@@ -25,7 +26,15 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
   }
 
   Future<List<Booking>> fetchPendingRequests() async {
-    final response = await http.get(Uri.parse(AppConstants.baseUrl + AppConstants.officerFetchAllPendingBookings));
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString("token") ?? '';
+    final response = await http.get(
+      Uri.parse(AppConstants.baseUrl + AppConstants.officerFetchAllPendingBookings),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);

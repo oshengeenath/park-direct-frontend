@@ -39,9 +39,15 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
     }
   }
   Future<List<Booking>> fetchHistoryData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString("token") ?? '';
     await getUserData();
     final response = await http.get(
       Uri.parse('${AppConstants.baseUrl}/vehicleOwner/get-all-bookings/$userEmail'),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
     );
     if (response.statusCode == 200) {
       setState(() {
