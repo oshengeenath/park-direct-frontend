@@ -6,7 +6,7 @@ import 'dart:developer' as developer;
 
 import '../../models/booking_model.dart';
 import '/util/app_constants.dart';
-import 'booking_shistrory_detail_screen.dart';
+import '../common_screens/booking_detail_screen.dart';
 
 class VehicleOwnerBookingHistoryScreen extends StatefulWidget {
   const VehicleOwnerBookingHistoryScreen({super.key});
@@ -105,9 +105,10 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => BookingHistoryDetailScreen(
-                                  booking: booking,
-                                )),
+                          builder: (context) => BookingDetailScreen(
+                            booking: booking,
+                          ),
+                        ),
                       );
                     },
                     child: Container(

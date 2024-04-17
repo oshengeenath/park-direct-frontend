@@ -2,20 +2,27 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../models/booking_model.dart';
 import '../../util/app_constants.dart';
+import '../common_screens/booking_detail_screen.dart';
+
 class TodayArrivalsScreen extends StatefulWidget {
   const TodayArrivalsScreen({super.key});
+
   @override
   State<TodayArrivalsScreen> createState() => _TodayArrivalsScreenState();
 }
+
 class _TodayArrivalsScreenState extends State<TodayArrivalsScreen> {
   late Future<List<Booking>> pendingRequests;
+
   @override
   void initState() {
     super.initState();
     pendingRequests = fetchTodayArrivals();
   }
+
   Future<List<Booking>> fetchTodayArrivals() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token") ?? '';
@@ -26,6 +33,7 @@ class _TodayArrivalsScreenState extends State<TodayArrivalsScreen> {
         "Authorization": "Bearer $token",
       },
     );
+
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Booking.fromJson(data)).toList();
@@ -35,6 +43,7 @@ class _TodayArrivalsScreenState extends State<TodayArrivalsScreen> {
       throw Exception('Failed to load today arrivals (Error: ${response.statusCode}).');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +81,16 @@ class _TodayArrivalsScreenState extends State<TodayArrivalsScreen> {
                 itemBuilder: (context, index) {
                   final booking = snapshot.data![index];
                   return GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BookingDetailScreen(
+                            booking: booking,
+                          ),
+                        ),
+                      );
+                    },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: const BoxDecoration(

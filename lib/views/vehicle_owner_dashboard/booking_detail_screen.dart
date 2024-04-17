@@ -3,16 +3,16 @@
 import 'package:flutter/material.dart';
 import '../../models/booking_model.dart';
 
-class BookingHistoryDetailScreen extends StatefulWidget {
+class BookingDetailScreen extends StatefulWidget {
   final Booking booking;
 
-  const BookingHistoryDetailScreen({Key? key, required this.booking}) : super(key: key);
+  const BookingDetailScreen({Key? key, required this.booking}) : super(key: key);
 
   @override
-  State<BookingHistoryDetailScreen> createState() => _BookingHistoryDetailScreenState();
+  State<BookingDetailScreen> createState() => _BookingDetailScreenState();
 }
 
-class _BookingHistoryDetailScreenState extends State<BookingHistoryDetailScreen> {
+class _BookingDetailScreenState extends State<BookingDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +20,7 @@ class _BookingHistoryDetailScreenState extends State<BookingHistoryDetailScreen>
         centerTitle: true,
         backgroundColor: const Color(0xFFFFC700),
         title: Text(
-          "booking for ${widget.booking.vehicleNumber}",
+          "Vehicle Number: ${widget.booking.vehicleNumber}",
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),

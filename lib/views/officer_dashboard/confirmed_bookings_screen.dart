@@ -2,22 +2,29 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../models/booking_model.dart';
 import '../../util/app_constants.dart';
+import '../common_screens/booking_detail_screen.dart';
+
 class ConfirmedRequestsScreen extends StatefulWidget {
   const ConfirmedRequestsScreen({super.key});
+
   @override
   State<ConfirmedRequestsScreen> createState() => _ConfirmedRequestsScreenState();
 }
+
 class _ConfirmedRequestsScreenState extends State<ConfirmedRequestsScreen> {
   late Future<List<Booking>> pendingRequests;
+
   @override
   void initState() {
     super.initState();
     pendingRequests = fetchConfirmedRequests();
   }
+
   Future<List<Booking>> fetchConfirmedRequests() async {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token") ?? '';
 
     final response = await http.get(
@@ -27,6 +34,7 @@ class _ConfirmedRequestsScreenState extends State<ConfirmedRequestsScreen> {
         "Authorization": "Bearer $token",
       },
     );
+
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Booking.fromJson(data)).toList();
@@ -34,6 +42,7 @@ class _ConfirmedRequestsScreenState extends State<ConfirmedRequestsScreen> {
       throw Exception('Failed to load confirmed bookings');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,8 +80,16 @@ class _ConfirmedRequestsScreenState extends State<ConfirmedRequestsScreen> {
                 itemBuilder: (context, index) {
                   final booking = snapshot.data![index];
                   return GestureDetector(
-                    
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BookingDetailScreen(
+                            booking: booking,
+                          ),
+                        ),
+                      );
+                    },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: const BoxDecoration(
