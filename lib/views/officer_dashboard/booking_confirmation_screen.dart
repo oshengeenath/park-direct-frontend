@@ -1,6 +1,7 @@
 // ignore_for_file: use_super_parameters, use_build_context_synchronously
 
 import 'dart:convert';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -103,27 +104,86 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 DataRow(cells: [
                   const DataCell(Text('Date')),
                   DataCell(
-                    GestureDetector(
-                      onTap: () => _selectDate(context),
-                      child: Text(widget.booking.date.toString()),
+                    Row(
+                      children: [
+                        Text(widget.booking.date.toString()),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        GestureDetector(
+                          onTap: () => _selectDate(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color(0xFFFFC700),
+                            ),
+                            child: const Text(
+                              'Change',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ]),
                 DataRow(cells: [
                   const DataCell(Text('Arrival Time')),
                   DataCell(
-                    GestureDetector(
-                      onTap: () => _selectTime(context, true),
-                      child: Text(widget.booking.arrivalTime),
+                    Row(
+                      children: [
+                        Text(widget.booking.arrivalTime),
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () => _selectTime(context, true),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color(0xFFFFC700),
+                            ),
+                            child: const Text(
+                              'Change',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ]),
                 DataRow(cells: [
                   const DataCell(Text('Leave Time')),
                   DataCell(
-                    GestureDetector(
-                      onTap: () => _selectTime(context, false),
-                      child: Text(widget.booking.leaveTime),
+                    Row(
+                      children: [
+                        Text(widget.booking.leaveTime),
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () => _selectTime(context, false),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color(0xFFFFC700),
+                            ),
+                            child: const Text(
+                              'Change',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ]),
