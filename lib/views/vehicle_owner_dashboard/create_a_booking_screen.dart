@@ -290,7 +290,7 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
                   const Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      'Vehicle',
+                      'Vehicle Number',
                       style: TextStyle(
                         fontSize: 18,
                       ),
@@ -313,7 +313,6 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
                           borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
                         ),
                         hintText: 'Enter Vehicle Number',
-                        labelText: 'Vehicle Number',
                       ),
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {

@@ -1,28 +1,61 @@
 // ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
+
 import '../../controllers/email_controller.dart';
 import '../../util/app_constants.dart';
 import 'vehicle_owner_login_screen.dart';
+
 class RegisterScreen2 extends StatefulWidget {
   const RegisterScreen2({super.key});
+
   @override
   State<RegisterScreen2> createState() => _RegisterScreen2State();
 }
+
 class _RegisterScreen2State extends State<RegisterScreen2> {
   bool isChecked = false;
   bool _obscureText = true;
-  bool isPasswordStrong = true;
-  bool _isValidMobile = true;
+
+  bool showError = false;
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  bool isValidFullName(String fullName) {
+    return fullName.isNotEmpty && fullName.length > 2;
+  }
+
+  bool isValidPhoneNumber(String phoneNumber) {
+    RegExp regex = RegExp(r'^\d{10}$');
+    return regex.hasMatch(phoneNumber);
+  }
+
+  bool isStrongPassword(String password) {
+    final RegExp hasUppercase = RegExp(r'[A-Z]');
+    final RegExp hasLowercase = RegExp(r'[a-z]');
+    final RegExp hasDigits = RegExp(r'\d');
+    final RegExp hasSpecialCharacters = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
+    return hasUppercase.hasMatch(password) && hasLowercase.hasMatch(password) && hasDigits.hasMatch(password) && hasSpecialCharacters.hasMatch(password) && password.length >= 8;
+  }
+
   Future<void> signUpUser() async {
+    if (!isChecked || !isValidFullName(_nameController.text) || !isValidPhoneNumber(_mobileController.text) || !isStrongPassword(_passwordController.text)) {
+      setState(() {
+        showError = true;
+      });
+      developer.log('Failed to sign-up user. Please check errors and ensure terms are accepted.');
+      return;
+    }
+
     String emailAddress = Get.find<EmailController>().emailAddress;
     const String apiUrl = '${AppConstants.baseUrl}${AppConstants.registerUser}';
+
     final response = await http.put(
       Uri.parse(apiUrl),
       headers: <String, String>{
@@ -35,6 +68,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
         'password': _passwordController.text,
       }),
     );
+
     if (response.statusCode == 200) {
       developer.log('User sign-up successfully');
       Navigator.push(
@@ -45,6 +79,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
       developer.log('Failed to save sign-up user. Error: ${response.statusCode}');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,6 +143,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                         color: Colors.grey,
                       ),
                       hintText: 'John Doe',
+                      errorText: showError && !isValidFullName(_nameController.text) ? 'Please enter a valid name' : null,
                     ),
                   ),
                 ),
@@ -130,12 +166,6 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                   ),
                   child: TextField(
                     controller: _mobileController,
-                    onChanged: (value) {
-                      setState(() {
-                        _isValidMobile = value.length == 9 && int.tryParse(value) != null;
-                        _isValidMobile = value.length == 10 && int.tryParse(value) != null;
-                      });
-                    },
                     decoration: InputDecoration(
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -150,7 +180,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                         color: Colors.grey,
                       ),
                       hintText: '077XXXXXXX',
-                      errorText: _isValidMobile ? null : 'Invalid Phone Number',
+                      errorText: showError && !isValidPhoneNumber(_mobileController.text) ? 'Please enter a valid phone' : null,
                     ),
                   ),
                 ),
@@ -174,74 +204,66 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                   child: TextField(
                     controller: _passwordController,
                     obscureText: _obscureText,
-                    onChanged: (text) {
-                      setState(() {
-                        isPasswordStrong = isStrongPassword(text);
-                      });
-                    },
                     decoration: InputDecoration(
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.lock,
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.lock,
+                        color: Colors.grey,
+                      ),
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                        child: Icon(
+                          _obscureText ? Icons.visibility : Icons.visibility_off,
                           color: Colors.grey,
                         ),
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _obscureText = !_obscureText;
-                            });
-                          },
-                          child: Icon(
-                            _obscureText ? Icons.visibility : Icons.visibility_off,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        hintText: '********',
-                        errorText: isPasswordStrong ? null : 'Use a strong Password'),
+                      ),
+                      hintText: '********',
+                      errorText: showError && !isStrongPassword(_passwordController.text) ? 'Password must contain lowercase letter, uppser case letter, digit and a special character' : null,
+                    ),
                   ),
                 ),
                 Row(
                   children: [
-                    Container(
-                      width: 20,
-                      height: 20,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFFC700),
-                      ),
-                      child: Checkbox(
-                        side: const BorderSide(color: Color(0xFFFFC700)),
-                        activeColor: const Color(0xFFFFC700),
-                        value: isChecked,
-                        onChanged: (newValue) {
-                          setState(() {
-                            isChecked = newValue!;
-                          });
-                        },
-                        checkColor: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    const Text('I agree to '),
-                    GestureDetector(
-                      onTap: () {
-                        _displayBottomSheet(context);
+                    Checkbox(
+                      value: isChecked,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isChecked = value!;
+                          showError = !isChecked;
+                        });
                       },
+                    ),
+                    GestureDetector(
+                      onTap: () => _displayBottomSheet(context),
                       child: const Text(
                         'Terms and Conditions',
                         style: TextStyle(
                           color: Colors.orange,
                         ),
                       ),
-                    )
+                    ),
+                    if (!isChecked && showError)
+                      const Padding(
+                        padding: EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          'You must accept the terms and conditions',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
                 SizedBox(
@@ -272,13 +294,16 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
     );
   }
 }
+
 bool isStrongPassword(String password) {
   final RegExp hasUppercase = RegExp(r'[A-Z]');
   final RegExp hasLowercase = RegExp(r'[a-z]');
   final RegExp hasDigits = RegExp(r'\d');
   final RegExp hasSpecialCharacters = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
+
   return hasUppercase.hasMatch(password) && hasLowercase.hasMatch(password) && hasDigits.hasMatch(password) && hasSpecialCharacters.hasMatch(password) && password.length >= 8;
 }
+
 class EmailValidator {
   static bool isValid(String email) {
     final RegExp emailRegex = RegExp(
@@ -287,6 +312,7 @@ class EmailValidator {
     return emailRegex.hasMatch(email);
   }
 }
+
 Future _displayBottomSheet(BuildContext context) {
   return showModalBottomSheet(
       context: context,
