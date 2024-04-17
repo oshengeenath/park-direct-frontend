@@ -8,42 +8,49 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'dart:developer' as developer;
+
 import '../../util/app_constants.dart';
 import '../auth/vehicle_owner_login_screen.dart';
 import 'booking_history_screen.dart';
 import '../common_screens/profile_screen.dart';
+
 class CreateABookingScreen extends StatefulWidget {
   const CreateABookingScreen({super.key});
+
   @override
   State<CreateABookingScreen> createState() => _CreateABookingScreenState();
 }
+
 class _CreateABookingScreenState extends State<CreateABookingScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _vehicleNumberController = TextEditingController();
+
   String _arrivalTime = '00:00';
   String _leaveTime = '00:00';
+
   DateTime pickedDate = DateTime.now();
   int dateFieldData = 0;
   int selectedValue = 0;
   bool isPickerVisible = false;
-  bool areFieldsValid() {
-    return _dateController.text.isNotEmpty && _arrivalTime != '00:00' && _leaveTime != '00:00' && _vehicleNumberController.text.isNotEmpty;
-  }
+
   void togglePickerVisibility() {
     setState(() {
       isPickerVisible = !isPickerVisible;
     });
   }
+
   void updateSelectedValue(int newValue) {
     setState(() {
       selectedValue = newValue;
     });
   }
+
   @override
   void initState() {
     super.initState();
     const NavigationDrawer();
   }
+
   List<String> timeValues = [
     '00:00',
     '01:00',
@@ -72,29 +79,52 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
   ];
 
   void _datePicker() {
-   
-    showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2000), lastDate: DateTime.now().add(const Duration(days: 365))).then((pickedDate) {
+    showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 365))).then((pickedDate) {
       if (pickedDate == null) {
         return;
       }
       setState(() {
-       _dateController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+        _dateController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
       });
     });
   }
+
+  bool isValidVehicleNumber(String vehicleNumber) {
+    RegExp regex = RegExp(r'^(?=.*[A-Z]{2,})(?=.*\d{4,})[A-Z\d]+$');
+    return regex.hasMatch(vehicleNumber);
+  }
+
+  bool areFieldsValid() {
+    return _dateController.text.isNotEmpty && _arrivalTime != '00:00' && _leaveTime != '00:00' && _vehicleNumberController.text.isNotEmpty && isValidVehicleNumber(_vehicleNumberController.text);
+  }
+
   Future<void> createBooking() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token") ?? '';
     final String userDataString = prefs.getString("userData") ?? '{}';
     final Map<String, dynamic> userData = json.decode(userDataString);
     final String userEmail = userData['email'] ?? 'default@example.com';
+
     String slotDate = _dateController.text;
     String arrivalTime = _arrivalTime;
     String leaveTime = _leaveTime;
     String vehicleNumber = _vehicleNumberController.text;
+
+    if (_arrivalTime.compareTo(_leaveTime) >= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Leave time must be later than arrival time."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     var uuid = const Uuid();
     String bookingId = uuid.v4();
+
     Uri url = Uri.parse('${AppConstants.baseUrl}/vehicleOwner/book-slot');
+
     try {
       final response = await http.post(
         url,
@@ -111,6 +141,7 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
           'vehicleNumber': vehicleNumber,
         }),
       );
+
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -141,6 +172,7 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -269,7 +301,7 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
                       color: const Color.fromARGB(255, 255, 255, 255),
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    child: TextField(
+                    child: TextFormField(
                       controller: _vehicleNumberController,
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
@@ -280,8 +312,18 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
                           borderRadius: BorderRadius.circular(30),
                           borderSide: const BorderSide(color: Color.fromARGB(255, 226, 223, 223), width: 1.0),
                         ),
-                        hintText: 'ABC123',
+                        hintText: 'Enter Vehicle Number',
+                        labelText: 'Vehicle Number',
                       ),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a vehicle number';
+                        } else if (!isValidVehicleNumber(value)) {
+                          return 'Vehicle number must contain at least 2 capital letters and 4 digits';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ],
@@ -318,6 +360,7 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
       ),
     );
   }
+
   GestureDetector buildTimePickerWidget(BuildContext context, String timeLabel, String timeValue, Function(String) onTimeSelected) {
     return GestureDetector(
       onTap: () async {
@@ -362,19 +405,24 @@ class _CreateABookingScreenState extends State<CreateABookingScreen> {
     );
   }
 }
+
 class NavigationDrawer extends StatefulWidget {
   const NavigationDrawer({Key? key}) : super(key: key);
+
   @override
   State<NavigationDrawer> createState() => _NavigationDrawerState();
 }
+
 class _NavigationDrawerState extends State<NavigationDrawer> {
   String userEmail = '';
   Map<String, dynamic> profileData = {};
+
   @override
   void initState() {
     super.initState();
     getUserData();
   }
+
   getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -382,6 +430,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
       developer.log("email: $userEmail");
     });
   }
+
   @override
   Widget build(BuildContext context) => Drawer(
         child: SingleChildScrollView(
@@ -394,6 +443,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
           ),
         ),
       );
+
   Widget buildHeader(BuildContext context) => Material(
         color: Colors.blue.shade700,
         child: InkWell(
@@ -425,6 +475,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
           ),
         ),
       );
+
   Widget buildMenuItems(BuildContext context) => Container(
         padding: const EdgeInsets.all(24),
         child: Wrap(runSpacing: 16, children: [
@@ -433,6 +484,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             title: const Text('profile'),
             onTap: () {
               Navigator.pop(context);
+
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MyProfileScreen()));
             },
           ),
@@ -441,6 +493,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               title: const Text('History'),
               onTap: () {
                 Navigator.pop(context);
+
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => const VehicleOwnerBookingHistoryScreen()));
               }),
           const ListTile(),
@@ -460,11 +513,15 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
         ]),
       );
 }
+
 Future<void> logOut(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
+
   await prefs.remove('token');
   await prefs.remove('userData');
+
   developer.log("User logged out. Data cleared from SharedPreferences.");
+
   Navigator.of(context).pushAndRemoveUntil(
     MaterialPageRoute(builder: (context) => const VehicleOwnerLoginScreen()),
     (Route<dynamic> route) => false,
