@@ -183,11 +183,13 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
 
 Color getStatusColor(String status) {
   switch (status.toLowerCase()) {
-    case 'failed':
+    case 'denied':
       return Colors.red;
     case 'confirmed':
       return Colors.green;
     case 'pending':
+      return Colors.yellow;
+    case 'completed':
       return Colors.yellow;
     default:
       return Colors.grey;
