@@ -27,9 +27,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
         ),
       ),
       body: Container(
-        padding: const EdgeInsets.all(8.0),
+        margin: const EdgeInsets.only(top: 16.0),
+        width: double.infinity,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             DataTable(
               columns: const [
@@ -45,7 +46,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   const DataCell(Text('Date')),
                   DataCell(
                     GestureDetector(
-                      //onTap: () => _selectDate(context),
                       child: Text(widget.booking.date.toString()),
                     ),
                   ),
@@ -54,7 +54,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   const DataCell(Text('Arrival Time')),
                   DataCell(
                     GestureDetector(
-                      //onTap: () => _selectTime(context, true),
                       child: Text(widget.booking.arrivalTime),
                     ),
                   ),
@@ -63,7 +62,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   const DataCell(Text('Leave Time')),
                   DataCell(
                     GestureDetector(
-                      //onTap: () => _selectTime(context, false),
                       child: Text(widget.booking.leaveTime),
                     ),
                   ),
