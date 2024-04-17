@@ -15,7 +15,9 @@ import '../../models/booking_model.dart';
 
 class BookingConfirmationScreen extends StatefulWidget {
   final Booking booking;
+
   const BookingConfirmationScreen({Key? key, required this.booking}) : super(key: key);
+
   @override
   State<BookingConfirmationScreen> createState() => _BookingConfirmationScreenState();
 }
@@ -39,6 +41,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       });
     }
   }
+
   Future<void> _selectTime(BuildContext context, bool isArrivalTime) async {
     final initialTime = _timeStringToTimeOfDay(isArrivalTime ? widget.booking.arrivalTime : widget.booking.leaveTime);
     final TimeOfDay? pickedTime = await showTimePicker(
@@ -56,6 +59,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       });
     }
   }
+
   TimeOfDay? _timeStringToTimeOfDay(String? timeString) {
     if (timeString == null) return null;
     final timeParts = timeString.split(':');
@@ -156,25 +160,52 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ]),
               ],
             ),
-            SizedBox(
-              height: 40,
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  confirmBooking();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFC700),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-                ),
-                child: const Text(
-                  'Confirm',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 255, 255, 255),
+            Column(
+              children: [
+                SizedBox(
+                  height: 40,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      confirmBooking();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                    ),
+                    child: const Text(
+                      'Confirm booking',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                const SizedBox(
+                  height: 16,
+                ),
+                SizedBox(
+                  height: 40,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      denyBooking();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                    ),
+                    child: const Text(
+                      'Deny booking',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
               height: 24,
@@ -204,6 +235,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
         'leaveTime': widget.booking.leaveTime,
       }),
     );
+
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -226,4 +258,6 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       );
     }
   }
+
+  void denyBooking() {}
 }

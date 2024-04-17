@@ -102,7 +102,6 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
                   final booking = snapshot.data![index];
                   return GestureDetector(
                     onTap: () {
-                      // TODO: Nvigate to the detail screen
                       Navigator.push(
                         context,
                         MaterialPageRoute(
