@@ -1,7 +1,6 @@
 // ignore_for_file: use_super_parameters, use_build_context_synchronously
 
 import 'dart:convert';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
