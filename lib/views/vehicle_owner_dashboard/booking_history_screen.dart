@@ -3,29 +3,39 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
+
 import '../../models/booking_model.dart';
 import '/util/app_constants.dart';
+import 'booking_shistrory_detail_screen.dart';
+
 class VehicleOwnerBookingHistoryScreen extends StatefulWidget {
   const VehicleOwnerBookingHistoryScreen({super.key});
+
   @override
   State<VehicleOwnerBookingHistoryScreen> createState() => _VehicleOwnerBookingHistoryScreenState();
 }
+
 class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHistoryScreen> {
   late Future<List<Booking>> historyData;
   String userEmail = '';
   bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
     historyData = fetchHistoryData();
     getUserData();
   }
+
   Future<void> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     String? userDataJson = prefs.getString("userData");
     Map<String, dynamic>? userData = userDataJson != null ? jsonDecode(userDataJson) : {};
+
     if (userData != null) {
       String? email = userData['email'];
+
       if (email != null) {
         setState(() {
           userEmail = email;
@@ -38,10 +48,12 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
       developer.log("No user data found in SharedPreferences.");
     }
   }
+
   Future<List<Booking>> fetchHistoryData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token") ?? '';
     await getUserData();
+
     final response = await http.get(
       Uri.parse('${AppConstants.baseUrl}/vehicleOwner/get-all-bookings/$userEmail'),
       headers: {
@@ -53,12 +65,14 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
       setState(() {
         isLoading = false;
       });
+
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Booking.fromJson(data)).toList();
     } else {
       throw Exception('Failed to load data from API');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,8 +101,16 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
                 itemBuilder: (context, index) {
                   final booking = snapshot.data![index];
                   return GestureDetector(
-                   
-                    onTap: () {},
+                    onTap: () {
+                      // TODO: Nvigate to the detail screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => BookingHistoryDetailScreen(
+                                  booking: booking,
+                                )),
+                      );
+                    },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: const BoxDecoration(
@@ -158,6 +180,7 @@ class _VehicleOwnerBookingHistoryScreenState extends State<VehicleOwnerBookingHi
     );
   }
 }
+
 Color getStatusColor(String status) {
   switch (status.toLowerCase()) {
     case 'failed':
