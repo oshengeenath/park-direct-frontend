@@ -23,10 +23,7 @@ class BookingConfirmationScreen extends StatefulWidget {
 }
 
 class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
+ParkingSlotController parkingSlotController = Get.find<ParkingSlotController>();
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -70,7 +67,6 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
     return TimeOfDay(hour: hour, minute: minute);
   }
 
-  ParkingSlotController parkingSlotController = Get.find<ParkingSlotController>();
 
   @override
   Widget build(BuildContext context) {
@@ -188,33 +184,36 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ]),
                 DataRow(cells: [
                   const DataCell(Text('Parking Slot ID')),
-                  DataCell(GestureDetector(
-                    onTap: () async {},
-                    child: parkingSlotController.selectedParkingSlot == ""
-                        ? GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const SelectASlotNewScreen()),
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: const Color(0xFFFFC700),
-                              ),
-                              child: const Text(
-                                'Select a Slot',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                  DataCell(Row(
+                    children: [
+                      Obx(
+                        () => Text(parkingSlotController.selectedParkingSlot.value.isNotEmpty ? parkingSlotController.selectedParkingSlot.value : "Not selected"),
+                      ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const SelectASlotNewScreen()),
+                          ).then((_) => setState(() {}));
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color(0xFFFFC700),
+                          ),
+                          child: const Text(
+                            'Select',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
                             ),
-                          )
-                        : Text(parkingSlotController.selectedParkingSlot),
+                          ),
+                        ),
+                      )
+                    ],
                   )),
                 ]),
               ],
@@ -288,7 +287,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       },
       body: jsonEncode({
         'bookingId': widget.booking.bookingId,
-        'parkingSlotId': parkingSlotController.selectedParkingSlot,
+        'parkingSlotId': parkingSlotController.selectedParkingSlot.value,
         'date': widget.booking.date,
         'arrivalTime': widget.booking.arrivalTime,
         'leaveTime': widget.booking.leaveTime,
@@ -302,8 +301,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('selectedSlotId');
+      parkingSlotController.clearSelection();
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const OfficerHomeScreen()),

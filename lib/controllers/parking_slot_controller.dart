@@ -1,11 +1,16 @@
 import 'package:get/get.dart';
 
 class ParkingSlotController extends GetxController {
-  String _selectedParkingSlot = "";
-  String get selectedParkingSlot => _selectedParkingSlot;
+  RxString _selectedParkingSlot = "".obs;
+  RxString get selectedParkingSlot => _selectedParkingSlot;
 
-  void saveParkingSlot(String select) {
-    _selectedParkingSlot = select;
+  void saveParkingSlot(String selection) {
+    _selectedParkingSlot.value = selection;
+    update();
+  }
+
+  void clearSelection() {
+    _selectedParkingSlot.value = "";
     update();
   }
 }
