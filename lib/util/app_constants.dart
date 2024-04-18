@@ -1,5 +1,5 @@
 class AppConstants {
-  static const String baseUrl = "park-direct.northeurope.cloudapp.azure.com:3004";
+  static const String baseUrl = "http://park-direct.northeurope.cloudapp.azure.com:3004";
 
   static const String sendVerificationEmail = "/auth/send-verification-email";
   static const String verifyEmail = "/auth/verify-email";
