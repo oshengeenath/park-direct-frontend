@@ -267,37 +267,57 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
   Future<void> confirmBooking() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token") ?? '';
+
     final url = Uri.parse(AppConstants.baseUrl + AppConstants.officerConfirmBookingRequest);
+
+    // Preparing the request body with necessary booking details
+    final requestBody = jsonEncode({
+      'bookingId': widget.booking.bookingId,
+      'parkingSlotId': parkingSlotController.selectedParkingSlot.value,
+      'date': widget.booking.date,
+    });
+
+    // Performing the POST request to the server
     final response = await http.post(
       url,
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
       },
-      body: jsonEncode({
-        'bookingId': widget.booking.bookingId,
-        'parkingSlotId': parkingSlotController.selectedParkingSlot.value,
-        'date': widget.booking.date,
-        'arrivalTime': widget.booking.arrivalTime,
-        'leaveTime': widget.booking.leaveTime,
-      }),
+      body: requestBody,
     );
+
+    // Handling response from the server
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Booking confirmed successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      parkingSlotController.clearSelection();
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const OfficerHomeScreen()),
-      );
+      final responseData = jsonDecode(response.body);
+      if (responseData['error'] != null) {
+        // Showing error message if the parking slot is already booked
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(responseData['error']),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else {
+        // Successfully confirmed booking
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Booking confirmed successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        parkingSlotController.clearSelection();
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const OfficerHomeScreen()),
+        );
+      }
     } else {
+      // Showing error message if there is a server error or booking not found
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to confirm booking.'),
+        SnackBar(
+          content: Text('Failed to confirm booking. Error: ${response.body}'),
           backgroundColor: Colors.red,
         ),
       );
