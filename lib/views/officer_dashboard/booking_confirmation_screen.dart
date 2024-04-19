@@ -267,14 +267,14 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
   Future<void> confirmBooking() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token") ?? '';
-
     final url = Uri.parse(AppConstants.baseUrl + AppConstants.officerConfirmBookingRequest);
-
     // Preparing the request body with necessary booking details
     final requestBody = jsonEncode({
       'bookingId': widget.booking.bookingId,
       'parkingSlotId': parkingSlotController.selectedParkingSlot.value,
       'date': widget.booking.date,
+      'arrivalTime': widget.booking.arrivalTime,
+      'leaveTime': widget.booking.leaveTime,
     });
 
     // Performing the POST request to the server
@@ -286,7 +286,6 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       },
       body: requestBody,
     );
-
     // Handling response from the server
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
@@ -307,7 +306,6 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
           ),
         );
         parkingSlotController.clearSelection();
-
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const OfficerHomeScreen()),
