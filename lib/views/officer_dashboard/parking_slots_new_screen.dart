@@ -2,33 +2,28 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 
 import '../../models/parking_slot_model.dart';
 import '../../util/app_constants.dart';
-
 class ParkingSlotsNewScreen extends StatefulWidget {
   const ParkingSlotsNewScreen({super.key});
-
   @override
   State<ParkingSlotsNewScreen> createState() => _ParkingSlotsNewScreenState();
 }
-
 class _ParkingSlotsNewScreenState extends State<ParkingSlotsNewScreen> {
   List<ParkingSlot> parkingSlots = [];
   bool isLoading = true;
-
   @override
   void initState() {
     super.initState();
     fetchParkingSlots();
   }
-
   Future<void> fetchParkingSlots() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token") ?? '';
-
     const url = AppConstants.baseUrl + AppConstants.offficerFetchAllParkingSlots;
     try {
       final response = await http.get(
@@ -42,17 +37,14 @@ class _ParkingSlotsNewScreenState extends State<ParkingSlotsNewScreen> {
       );
       developer.log('HTTP Response status: ${response.statusCode}');
       final List<dynamic> fetchedSlots = json.decode(response.body);
-
       if (fetchedSlots.isEmpty) {
         developer.log('No slots were fetched.');
       }
-
       final List<ParkingSlot> loadedSlots = [];
       for (var slot in fetchedSlots) {
         loadedSlots.add(ParkingSlot.fromJson(slot));
         developer.log('Loaded slot: ${slot['slotId']}');
       }
-
       setState(() {
         parkingSlots = loadedSlots;
         isLoading = false;
@@ -67,12 +59,19 @@ class _ParkingSlotsNewScreenState extends State<ParkingSlotsNewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Format today's date
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+
+    // Convert the formatted date string back to a DateTime object
+    DateTime selectedDate = DateFormat('yyyy-MM-dd').parse(formattedDate);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: const Color(0xFFFFC700),
         title: const Text(
-          'Parking slots new screen',
+          'Today slots availability',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -85,32 +84,33 @@ class _ParkingSlotsNewScreenState extends State<ParkingSlotsNewScreen> {
               child: Row(
                 children: [
                   // Assuming your slot IDs are sequential and match the UI slots one-to-one
-                  buildColumn(1, 0, borderTopLeft()),
+                  buildColumn(1, 0, borderTopLeft(), selectedDate),
                   const Spacer(),
-                  buildColumn(11, 1, middleBorderTopRight()),
-                  buildColumn(21, 2, middleBorderTopLeft()),
+                  buildColumn(11, 1, middleBorderTopRight(), selectedDate),
+                  buildColumn(21, 2, middleBorderTopLeft(), selectedDate),
                   const Spacer(),
-                  buildColumn(31, 3, borderTopRight()),
+                  buildColumn(31, 3, borderTopRight(), selectedDate),
                 ],
               ),
             ),
     );
   }
 
-  Widget buildColumn(int start, int colNum, BoxDecoration decoration) {
+  Widget buildColumn(int start, int colNum, BoxDecoration decoration, DateTime selectedDate) {
     return Column(
       children: List.generate(10, (index) {
         // Find a parking slot that matches this UI slot
         var slotId = "S${start + index}";
-        var slot = parkingSlots.firstWhere((s) => s.slotId == slotId, orElse: () => ParkingSlot(slotId: slotId, status: "booked")); // Default to available if not found
-        return createSlot(slotId, decoration, index == 9, colNum, slot.status == "available");
+        var slot = parkingSlots.firstWhere((s) => s.slotId == slotId, orElse: () => ParkingSlot(slotId: slotId, bookings: []) // Assume no bookings if not found
+            );
+        // Determine if the slot is available on the selected date
+        bool isAvailable = !slot.isBookedOn(selectedDate);
+        return createSlot(slotId, decoration, index == 9, colNum, isAvailable);
       }),
     );
   }
-
   Widget createSlot(String text, BoxDecoration decoration, bool isLast, int colNum, bool isAvailable) {
     var slotColor = isAvailable ? const Color(0xFFF3F6FF) : Colors.red;
-
     BoxDecoration finalDecoration;
     if (isLast && (colNum == 0)) {
       finalDecoration = decoration.copyWith(
@@ -147,7 +147,6 @@ class _ParkingSlotsNewScreenState extends State<ParkingSlotsNewScreen> {
     } else {
       finalDecoration = decoration;
     }
-
     return Container(
       decoration: finalDecoration,
       //margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -164,7 +163,6 @@ class _ParkingSlotsNewScreenState extends State<ParkingSlotsNewScreen> {
       ),
     );
   }
-
   BoxDecoration borderTopLeft() {
     return const BoxDecoration(
       border: Border(
@@ -179,7 +177,6 @@ class _ParkingSlotsNewScreenState extends State<ParkingSlotsNewScreen> {
       ),
     );
   }
-
   BoxDecoration borderTopRight() {
     return const BoxDecoration(
       border: Border(
@@ -194,7 +191,6 @@ class _ParkingSlotsNewScreenState extends State<ParkingSlotsNewScreen> {
       ),
     );
   }
-
   BoxDecoration middleBorderTopLeft() {
     return const BoxDecoration(
       border: Border(
@@ -209,7 +205,6 @@ class _ParkingSlotsNewScreenState extends State<ParkingSlotsNewScreen> {
       ),
     );
   }
-
   BoxDecoration middleBorderTopRight() {
     return const BoxDecoration(
       border: Border(

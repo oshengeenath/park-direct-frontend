@@ -5,11 +5,14 @@ import 'package:http/http.dart' as http;
 import 'package:park_direct_frontend/controllers/parking_slot_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
-
 import '../../models/parking_slot_model.dart';
 import '../../util/app_constants.dart';
+
 class SelectASlotNewScreen extends StatefulWidget {
-  const SelectASlotNewScreen({super.key});
+  final String bookingDate;
+
+  const SelectASlotNewScreen({super.key, required this.bookingDate});
+
   @override
   State<SelectASlotNewScreen> createState() => _SelectASlotNewScreenState();
 }
@@ -23,7 +26,7 @@ class _SelectASlotNewScreenState extends State<SelectASlotNewScreen> {
     fetchParkingSlots();
   }
   Future<void> fetchParkingSlots() async {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token") ?? '';
     const url = AppConstants.baseUrl + AppConstants.offficerFetchAllParkingSlots;
     try {
@@ -62,7 +65,7 @@ class _SelectASlotNewScreenState extends State<SelectASlotNewScreen> {
         centerTitle: true,
         backgroundColor: const Color(0xFFFFC700),
         title: const Text(
-          'Parking slots new screen',
+          'Parking slots availability',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -76,12 +79,12 @@ class _SelectASlotNewScreenState extends State<SelectASlotNewScreen> {
                   margin: const EdgeInsets.all(32),
                   child: Row(
                     children: [
-                      buildColumn(1, 0, borderTopLeft()),
+                      buildColumn(1, 0, borderTopLeft(), widget.bookingDate),
                       const Spacer(),
-                      buildColumn(11, 1, middleBorderTopRight()),
-                      buildColumn(21, 2, middleBorderTopLeft()),
+                      buildColumn(11, 1, middleBorderTopRight(), widget.bookingDate),
+                      buildColumn(21, 2, middleBorderTopLeft(), widget.bookingDate),
                       const Spacer(),
-                      buildColumn(31, 3, borderTopRight()),
+                      buildColumn(31, 3, borderTopRight(), widget.bookingDate),
                     ],
                   ),
                 ),
@@ -108,12 +111,18 @@ class _SelectASlotNewScreenState extends State<SelectASlotNewScreen> {
             ),
     );
   }
-  Widget buildColumn(int start, int colNum, BoxDecoration decoration) {
+
+// Assume parkingSlots and selectedDate are available in the scope or passed appropriately
+  Widget buildColumn(int start, int colNum, BoxDecoration decoration, String selectedDate) {
     return Column(
       children: List.generate(10, (index) {
+        // Find a parking slot that matches this UI slot
         var slotId = "S${start + index}";
-        var slot = parkingSlots.firstWhere((s) => s.slotId == slotId, orElse: () => ParkingSlot(slotId: slotId, status: "booked"));
-        return createSlot(slotId, decoration, index == 9, colNum, slot.status == "available");
+        var slot = parkingSlots.firstWhere((s) => s.slotId == slotId, orElse: () => ParkingSlot(slotId: slotId, bookings: []));
+        // Determine if the slot is available on the selected date
+        DateTime parsedDate = DateTime.parse(selectedDate);
+        bool isAvailable = !slot.isBookedOn(parsedDate);
+        return createSlot(slotId, decoration, index == 9, colNum, isAvailable);
       }),
     );
   }

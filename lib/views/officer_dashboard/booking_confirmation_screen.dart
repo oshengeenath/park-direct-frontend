@@ -1,5 +1,4 @@
 // ignore_for_file: use_super_parameters, use_build_context_synchronously
-
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -7,24 +6,18 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:park_direct_frontend/views/officer_dashboard/select_a_slot_new_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:park_direct_frontend/views/home_screens/officer_home_screen.dart';
 import '../../controllers/parking_slot_controller.dart';
 import '/util/app_constants.dart';
 import '../../models/booking_model.dart';
-
 class BookingConfirmationScreen extends StatefulWidget {
   final Booking booking;
-
   const BookingConfirmationScreen({Key? key, required this.booking}) : super(key: key);
-
   @override
   State<BookingConfirmationScreen> createState() => _BookingConfirmationScreenState();
 }
-
 class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
-ParkingSlotController parkingSlotController = Get.find<ParkingSlotController>();
-
+  ParkingSlotController parkingSlotController = Get.find<ParkingSlotController>();
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -38,7 +31,6 @@ ParkingSlotController parkingSlotController = Get.find<ParkingSlotController>();
       });
     }
   }
-
   Future<void> _selectTime(BuildContext context, bool isArrivalTime) async {
     final initialTime = _timeStringToTimeOfDay(isArrivalTime ? widget.booking.arrivalTime : widget.booking.leaveTime);
     final TimeOfDay? pickedTime = await showTimePicker(
@@ -56,7 +48,6 @@ ParkingSlotController parkingSlotController = Get.find<ParkingSlotController>();
       });
     }
   }
-
   TimeOfDay? _timeStringToTimeOfDay(String? timeString) {
     if (timeString == null) return null;
     final timeParts = timeString.split(':');
@@ -66,8 +57,6 @@ ParkingSlotController parkingSlotController = Get.find<ParkingSlotController>();
     if (hour == null || minute == null) return null;
     return TimeOfDay(hour: hour, minute: minute);
   }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -194,7 +183,9 @@ ParkingSlotController parkingSlotController = Get.find<ParkingSlotController>();
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const SelectASlotNewScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => SelectASlotNewScreen(bookingDate: widget.booking.date),
+                            ),
                           ).then((_) => setState(() {}));
                         },
                         child: Container(
@@ -273,11 +264,9 @@ ParkingSlotController parkingSlotController = Get.find<ParkingSlotController>();
       ),
     );
   }
-
   Future<void> confirmBooking() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token") ?? '';
-
     final url = Uri.parse(AppConstants.baseUrl + AppConstants.officerConfirmBookingRequest);
     final response = await http.post(
       url,
@@ -293,7 +282,6 @@ ParkingSlotController parkingSlotController = Get.find<ParkingSlotController>();
         'leaveTime': widget.booking.leaveTime,
       }),
     );
-
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -315,11 +303,9 @@ ParkingSlotController parkingSlotController = Get.find<ParkingSlotController>();
       );
     }
   }
-
   void denyBooking() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString("token") ?? '';
-
     final url = Uri.parse(AppConstants.baseUrl + AppConstants.officerDenyBooking); // Make sure this URL is correct
     final response = await http.post(
       url,
@@ -331,7 +317,6 @@ ParkingSlotController parkingSlotController = Get.find<ParkingSlotController>();
         'bookingId': widget.booking.bookingId,
       }),
     );
-
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
